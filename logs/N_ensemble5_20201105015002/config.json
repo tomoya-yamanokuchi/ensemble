@@ -1,0 +1,1 @@
+{"seed": 3, "gpu": "1", "dataset": "/home/dl-box/jst/python_code/drkvae/master/logs/plane_64x64_N2800_seq10_20201029133630_20201029141634_kvae/1step_prediction_error_data/pred_error_from_random.npz", "dim_inputs": 1, "dim_outputs": 1, "N_ensemble": 5, "reload_model": "", "log_dir": "logs/N_ensemble5_20201105015002"}
