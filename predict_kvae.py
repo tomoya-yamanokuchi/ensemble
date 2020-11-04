@@ -4,6 +4,7 @@ import time
 import copy
 import subprocess
 import numpy as np
+import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.compat.v1 import ConfigProto
@@ -43,7 +44,7 @@ class RUN_PREDICT:
 
 
     def run(self): 
-        path_conf = "./logs/N_ensemble5_20201105015321"
+        path_conf = "./logs/N_ensemble5_20201105021030"
         config = get_image_config()
         config.FLAGS.reload_model = path_conf + "/"
         config = reload_config(config.FLAGS)
@@ -87,8 +88,11 @@ class RUN_PREDICT:
         self.y_train = y_train
 
 
-        self.predict_test0()
-        self.predict_test1()
+        # self.predict_test1(mean_var=True)
+        # self.predict_test1(mean_var=False)
+        self.predict_test2()
+        # self.predict_test_train(mean_var=True)
+        # self.predict_test_train(mean_var=False)
 
 
         # for n in range(N_test):
@@ -109,7 +113,7 @@ class RUN_PREDICT:
 
 
 
-    def predict_test0(self): 
+    def predict_test1(self, mean_var=False): 
         N_ensemble = self.N_ensemble
         N_test = 15
 
@@ -118,28 +122,40 @@ class RUN_PREDICT:
         y_test = self.y_train[ind_test]
 
         y_predict = self.model.predict(x_test.reshape(-1, self.dim_x))
-
-        yy = np.zeros([N_test, N_ensemble, self.step, self.dim_y])
+        y_predict = np.stack(y_predict, axis=-1).reshape(N_test, self.step, self.dim_y, N_ensemble)
 
         for n in range(N_test):
             fig, ax = plt.subplots()
-            for m in range(N_ensemble):
-                yy[n, m, :, :] = y_predict[m].reshape(N_test, self.step, self.dim_y)[n]
 
-            for m in range(N_ensemble):
-                ax.plot(yy[n, m, :, 0], color="r")
+            if mean_var is False: 
+                for m in range(N_ensemble):
+                    ax.plot(y_predict[n, :, 0, m], color="r")
+            else: 
+                mean  = np.mean(y_predict[n, :, 0, :], axis=-1)
+                std   = np.std( y_predict[n, :, 0, :], axis=-1)
+                lower = mean - 2.0*std
+                upper = mean + 2.0*std
+                x = range(self.step)
+                color_true = "fuchsia"
+                color_fill = "skyblue"
+                ax.fill_between(x, lower, upper, alpha=0.6, color=color_fill)
+                ax.plot(x, mean,  "-",  color=color_true)
+
             ax.plot(y_test[n, :, 0], color="k")
             plt.show()
 
 
 
-    def predict_test1(self): 
+    def predict_test2(self): 
         # self.x_train.reshape(-1, self.dim_x)[:, 0]
         N_mesh = 100
         x_test = np.tile(np.linspace(-0.5, 1.5, N_mesh).reshape(-1, 1), (1, self.dim_x))
-        # x_test = np.tile(np.linspace(0, 1, N_mesh).reshape(-1, 1), (1, self.dim_x))
+
         X1, X2 = np.meshgrid(x_test[:, 0], x_test[:, 1])
         X_TEST = np.concatenate([X1.reshape(-1, 1), X2.reshape(-1, 1)], axis=-1)
+
+        X_TEST_add = np.tile(self.x_train[-100, 4, -3:].reshape(1, -1), (N_mesh**2, 1))
+        X_TEST = np.concatenate([X_TEST, X_TEST_add], axis=-1)
 
         N_inputs, _ = X_TEST.shape
         N_ensemble = self.N_ensemble
@@ -176,8 +192,38 @@ class RUN_PREDICT:
         plt.show()
 
 
-plt.show()
 
+    def predict_test_train(self, mean_var=True):
+        N_ensemble = self.N_ensemble
+        x_test = self.x_train
+        y_test = self.y_train
+
+        y_predict = self.model.predict(x_test.reshape(-1, self.dim_x))
+        y_predict = np.stack(y_predict, axis=-1)
+        
+        y_mean = np.mean(y_predict, axis=-1)
+        y_true = y_test.reshape(-1, self.dim_y) 
+        
+        y_min = np.concatenate([y_mean, y_true], axis=-1).reshape(-1).min()
+        y_max = np.concatenate([y_mean, y_true], axis=-1).reshape(-1).max()
+
+        error = (y_true - y_mean)**2
+
+        if mean_var is True: 
+            fig, ax = plt.subplots()
+            ax.plot(y_true, y_mean,'b.', markersize=3)
+            ax.plot([y_min, y_max],[y_min, y_max], color="k")
+            ax.set_xlabel('y_true')
+            ax.set_ylabel('y_predict')
+            plt.show()
+        else: 
+            fig, ax = plt.subplots()
+            for i in range(N_ensemble): 
+                ax.plot(y_true, y_predict[:, 0, i], linestyle="None", marker=".", color=cm.hsv(i/N_ensemble), markersize=3)
+            ax.plot([y_min, y_max],[y_min, y_max], color="k")
+            ax.set_xlabel('y_true')
+            ax.set_ylabel('y_predict')
+            plt.show()
 
 
 if __name__ == "__main__":

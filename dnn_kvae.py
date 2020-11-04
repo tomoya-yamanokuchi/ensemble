@@ -10,6 +10,7 @@ from tensorflow.python.keras.layers import Lambda
 class DNNModel: 
     def __init__(self, config):
         self.config = config
+        self.units = [int(f) for f in config.units.split(',')]
         self.dim_inputs  = config.dim_inputs
         self.dim_outputs = config.dim_outputs
         print("init !")
@@ -25,15 +26,11 @@ class DNNModel:
 
     def nn_construct(self):
         inputs  = keras.layers.Input(shape=(self.dim_inputs,))
-        x       = Dense(200, activation=self.swish)(inputs)
-        x       = Dense(200, activation=self.swish)(x)
-        x       = Dense(200, activation=self.swish)(x)
-        x       = Dense(200, activation=self.swish)(x)
-        # x       = Dense(2048, activation=self.swish)(x)
-        # x       = Dense(2048, activation=self.swish)(x)
-        # # x       = Dense(1024, activation=self.swish)(x)
-        # # x       = Dense(512, activation=self.swish)(x)
-        # # x       = Dense(512, activation=self.swish)(x)
+        x       = Dense(self.units[0], activation=self.swish)(inputs)
+
+        for n_unit in self.units[1:]: 
+            x = Dense(n_unit, activation=self.swish)(x)
+
         outputs = Dense(self.dim_outputs)(x)
         return keras.Model(inputs, outputs)
 

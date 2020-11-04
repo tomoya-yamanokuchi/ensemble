@@ -38,6 +38,33 @@ class RUN_DNN:
         print()
 
 
+    def plot_inputs_scatter(self, x, y): 
+        cm = plt.cm.get_cmap('RdYlBu')
+
+        fig = plt.figure()        
+        ax = fig.add_subplot(1, 1, 1)
+        
+        for i in range(x.shape[0]): 
+            print(" - {0}/{1}".format(i, x.shape[0]))
+            mappable = ax.scatter(x[i, :, 0], x[i, :, 1], c=y[i, :, 0], vmin=0, vmax=20, s=10, cmap=cm, lw=0)
+
+        fig.colorbar(mappable, ax=ax)
+        plt.show()
+
+
+        # import seaborn as sns
+        # import pandas as pd
+        # import matplotlib.cm as cm
+
+        # data = pd.DataFrame(x, columns=["state", "control"])
+        # ax1 = sns.jointplot(x="state", y='control', data=data, kind='hex')
+        # # ax1.ax_joint.cla()
+        # # plt.sca(ax1.ax_joint)
+        # # plt.hist2d(data["state"], data["control"], bins=(100, 100), cmap=cm.jet)
+
+        plt.show()
+
+
     def run(self): 
         config = get_image_config()
         config = reload_config(config.FLAGS)
@@ -66,6 +93,10 @@ class RUN_DNN:
 
         N_train, step, dim_x = x_train.shape
         dim_y = config.dim_outputs
+
+
+        # self.plot_inputs_scatter(x_train, np.log(y_train))
+        # self.plot_inputs_scatter(x_train.reshape(-1, dim_x)[:, :2], np.log(y_train).reshape(-1, dim_y))
 
         # self.plot_hist(x_train1.reshape(-1))
         # self.plot_hist(np.log(x_train1.reshape(-1)))
@@ -96,7 +127,7 @@ class RUN_DNN:
         # y_min = np.min(np.min(y_train, axis=0), axis=0).reshape(1, 1, dim_y)
         # y_train = (y_train - y_min) / (y_max - y_min)
         # y_train = y_train * config.scale_inputs
-        y_train = np.log(y_train)
+        y_train = np.log(y_train + 1e-7)
         y_train = (y_train - np.mean(y_train.reshape(-1))) / np.std(y_train.reshape(-1))
 
 
@@ -107,11 +138,11 @@ class RUN_DNN:
         # plt.show()
 
 
-        # fig, ax = plt.subplots()
-        # for i in range(N_train):
-        #     ax.plot(y_train[i, :, 0])
+        fig, ax = plt.subplots()
+        for i in range(N_train):
+            ax.plot(y_train[i, :, 0])
         # ax.set_yscale('log')
-        # plt.show()
+        plt.show()
 
 
         # # ================
