@@ -123,14 +123,6 @@ class RUN_DNN:
         # sns.heatmap(x_train.reshape(-1, 2))
         # plt.show()
 
-        # y_max = np.max(np.max(y_train, axis=0), axis=0).reshape(1, 1, dim_y)
-        # y_min = np.min(np.min(y_train, axis=0), axis=0).reshape(1, 1, dim_y)
-        # y_train = (y_train - y_min) / (y_max - y_min)
-        # y_train = y_train * config.scale_inputs
-        y_train = np.log(y_train + 1e-7)
-        y_train = (y_train - np.mean(y_train.reshape(-1))) / np.std(y_train.reshape(-1))
-
-
         # fig, ax = plt.subplots(1,2, figsize=(12, 5))
         # for i in range(N_train):
         #     for d in range(2): 
@@ -138,11 +130,21 @@ class RUN_DNN:
         # plt.show()
 
 
-        fig, ax = plt.subplots()
-        for i in range(N_train):
-            ax.plot(y_train[i, :, 0])
-        # ax.set_yscale('log')
-        plt.show()
+        # y_max = np.max(np.max(y_train, axis=0), axis=0).reshape(1, 1, dim_y)
+        # y_min = np.min(np.min(y_train, axis=0), axis=0).reshape(1, 1, dim_y)
+        # y_train = (y_train - y_min) / (y_max - y_min)
+        # y_train = y_train * config.scale_inputs
+
+        y_train = np.log(y_train + config.bias)
+        y_train = (y_train - np.mean(y_train.reshape(-1))) / np.std(y_train.reshape(-1))
+
+        self.plot_hist(y_train.reshape(-1))
+
+        # fig, ax = plt.subplots()
+        # for i in range(N_train):
+        #     ax.plot(y_train[i, :, 0])
+        # # ax.set_yscale('log')
+        # plt.show()
 
 
         # # ================

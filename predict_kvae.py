@@ -44,7 +44,9 @@ class RUN_PREDICT:
 
 
     def run(self): 
-        path_conf = "./logs/N_ensemble5_20201105021030"
+        path_conf = "./logs/N_ensemble5_20201105035450"
+        # path_conf = "./logs/N_ensemble5_20201105035349"
+
         config = get_image_config()
         config.FLAGS.reload_model = path_conf + "/"
         config = reload_config(config.FLAGS)
@@ -90,10 +92,9 @@ class RUN_PREDICT:
 
         # self.predict_test1(mean_var=True)
         # self.predict_test1(mean_var=False)
-        self.predict_test2()
         # self.predict_test_train(mean_var=True)
         # self.predict_test_train(mean_var=False)
-
+        self.predict_test2()
 
         # for n in range(N_test):
         #     fig, ax = plt.subplots()
@@ -154,40 +155,33 @@ class RUN_PREDICT:
         X1, X2 = np.meshgrid(x_test[:, 0], x_test[:, 1])
         X_TEST = np.concatenate([X1.reshape(-1, 1), X2.reshape(-1, 1)], axis=-1)
 
-        X_TEST_add = np.tile(self.x_train[-100, 4, -3:].reshape(1, -1), (N_mesh**2, 1))
-        X_TEST = np.concatenate([X_TEST, X_TEST_add], axis=-1)
+        ind_alpha  = -100
+        N_zu = 100
+        zu_add     = np.tile(self.x_train[ind_alpha, 4, :2].reshape(1, 2), (N_zu, 1))
+        X_TEST_add = np.tile(self.x_train[ind_alpha, 4, -3:].reshape(1, -1), (N_mesh**2, 1))
+        X_TEST     = np.concatenate([X_TEST, X_TEST_add], axis=-1)
 
         N_inputs, _ = X_TEST.shape
         N_ensemble = self.N_ensemble
 
-        # ddd
         y_predict = self.model.predict(X_TEST)
-
-        yy = np.zeros([N_ensemble, N_inputs, self.dim_y])
-
-
-        # fig, ax = plt.subplots()
-        yp = np.zeros([N_ensemble, N_inputs])
-        for m in range(N_ensemble):
-            yy[m, :, :] = y_predict[m]
-
-        # Y = yy[1, :, 0].reshape(N_mesh, N_mesh)
+        y_predict = np.stack(y_predict, axis=-1)
 
         fig = plt.figure(figsize=(8,6))
         ax3d = plt.axes(projection="3d")
-
         ax3d = plt.axes(projection='3d')
 
-        yy = np.minimum(1, yy)
-        yy = np.maximum(-1, yy)
+        yy = np.minimum(1,  y_predict)
+        yy = np.maximum(-1, y_predict)
         # for m in range(N_ensemble): 
         for m in range(1): 
-            ax3d.plot_surface(X1, X2, yy[m, :, 0].reshape(N_mesh, N_mesh),cmap='plasma')
+            ax3d.plot_surface(X1, X2, yy[:, 0, m].reshape(N_mesh, N_mesh),cmap='plasma')
+        ax3d.plot(zu_add[:, 0], zu_add[:, 1], np.linspace(-1.2, 1.2, N_zu),  markersize=30, color="r")
         ax3d.set_title('Surface Plot in Matplotlib')
         ax3d.set_xlabel('X')
         ax3d.set_ylabel('Y')
         ax3d.set_zlabel('Z')
-        ax3d.set_zlim([-1, 1])
+        ax3d.set_zlim([-1.2, 1.2])
 
         plt.show()
 
