@@ -23,14 +23,17 @@ def reload_config(FLAGS):
 def get_image_config():
     cl = tf.app.flags
 
-    # cl.DEFINE_integer('seed', 0,  'seed num')
-    cl.DEFINE_string('gpu', '0', 'Comma seperated list of GPUs')
+    flags_dict = tf.flags.FLAGS._flags()
+    keys_list = [keys for keys in flags_dict]
 
-    cl.DEFINE_string('dataset', '/home/dl-box/jst/python_code/drkvae/master/logs/plane_64x64_N2800_seq10_20201029133630_20201029141634_kvae/1step_prediction_error_data/pred_error_from_random.npz', 'dataset')
+    if 'gpu' not in keys_list: 
+        cl.DEFINE_string('gpu', '0', 'Comma seperated list of GPUs')
+    if 'dataset' not in keys_list: 
+        cl.DEFINE_string('dataset', '/home/dl-box/jst/python_code/drkvae/master/logs/plane_64x64_N2800_seq10_20201029133630_20201029141634_kvae/1step_prediction_error_data/pred_error_from_random.npz', 'dataset')
     
     # feature transformation 
     cl.DEFINE_float('scale_inputs',  100,   'scale_inputs')
-    cl.DEFINE_float('bias',         1e-7,   'bias')
+    cl.DEFINE_float('bias',         0,   'bias') # 1e-7
  
     # network setting
     cl.DEFINE_integer('dim_inputs',    5,   'dim_inputs')
@@ -41,12 +44,16 @@ def get_image_config():
 
     # optimizer setting
     cl.DEFINE_integer('epoch',        3000,   'epoch')
-    cl.DEFINE_integer('batch_size',    32,    'batch_size')
-    cl.DEFINE_float('learning_rate', 0.001, 'learning_rate')
-    
+    if 'batch_size' not in keys_list: 
+        cl.DEFINE_integer('batch_size',    32,    'batch_size')
+    if 'learning_rate' not in keys_list: 
+        cl.DEFINE_float('learning_rate', 0.001, 'learning_rate')
 
-    cl.DEFINE_string('reload_model', '', 'Path to the model.ckpt file')
-    cl.DEFINE_string('log_dir',  'logs', 'Directory to save files in')
+    if 'reload_model' not in keys_list: 
+        cl.DEFINE_string('reload_model', '', 'Path to the model.ckpt file')
+    
+    if 'log_dir' not in keys_list: 
+        cl.DEFINE_string('log_dir',  'logs', 'Directory to save files in')
 
     print((3))
 

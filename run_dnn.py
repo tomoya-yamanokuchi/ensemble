@@ -1,5 +1,6 @@
 import json
 import os
+import pickle
 import time
 from scipy import stats
 import subprocess
@@ -102,15 +103,10 @@ class RUN_DNN:
         # self.plot_hist(np.log(x_train1.reshape(-1)))
         # self.plot_hist(x_train1.reshape(-1))
 
-        # self.plot_hist(x_train3.reshape(-1))
-
-        # for i in range(dim_x): 
-        #     self.plot_line(x_train[:, :, i])
 
         x_max = np.max(np.max(x_train, axis=0), axis=0).reshape(1, 1, dim_x)
         x_min = np.min(np.min(x_train, axis=0), axis=0).reshape(1, 1, dim_x)
         x_train = (x_train - x_min) / (x_max - x_min)
-
 
         # for i in range(dim_x): 
         #     self.plot_line(x_train[:, :, i])
@@ -136,15 +132,27 @@ class RUN_DNN:
         # y_train = y_train * config.scale_inputs
 
         y_train = np.log(y_train + config.bias)
-        y_train = (y_train - np.mean(y_train.reshape(-1))) / np.std(y_train.reshape(-1))
+        y_log_mean = np.mean(y_train.reshape(-1))
+        y_log_std  = np.std(y_train.reshape(-1))
+        y_train = (y_train - y_log_mean) / y_log_std
+
+        norm_info = {}
+        norm_info["x_max"]      = x_max[0,0,:]
+        norm_info["x_min"]      = x_min[0,0,:]
+        norm_info["bias"]       = config.bias
+        norm_info["y_log_mean"] = y_log_mean
+        norm_info["y_log_std"]  = y_log_std
+        with open(config.log_dir + "/norm_info.pickle", "wb") as f: 
+            pickle.dump(norm_info, f)
+
 
         self.plot_hist(y_train.reshape(-1))
 
-        # fig, ax = plt.subplots()
-        # for i in range(N_train):
-        #     ax.plot(y_train[i, :, 0])
-        # # ax.set_yscale('log')
-        # plt.show()
+        fig, ax = plt.subplots()
+        for i in range(N_train):
+            ax.plot(y_train[i, :, 0])
+        # ax.set_yscale('log')
+        plt.show()
 
 
         # # ================

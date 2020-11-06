@@ -1,5 +1,6 @@
 import json
 import os
+import pickle
 import time
 import copy
 import subprocess
@@ -10,7 +11,7 @@ import tensorflow as tf
 from tensorflow.compat.v1 import ConfigProto
 from config_kvae import reload_config, get_image_config
 from dnn_kvae import DNNModel
-
+import normalize_dnn_data as norm_dnn_data
 
 
 class RUN_PREDICT:
@@ -42,9 +43,8 @@ class RUN_PREDICT:
         plt.show()
 
 
-
     def run(self): 
-        path_conf = "./logs/N_ensemble5_20201105035450"
+        path_conf = "./logs/N_ensemble5_20201105035501"
         # path_conf = "./logs/N_ensemble5_20201105035349"
 
         config = get_image_config()
@@ -71,16 +71,17 @@ class RUN_PREDICT:
         N_train, step, dim_x = x_train.shape
         dim_y = config.dim_outputs
 
-        x_max = np.max(np.max(x_train, axis=0), axis=0).reshape(1, 1, dim_x)
-        x_min = np.min(np.min(x_train, axis=0), axis=0).reshape(1, 1, dim_x)
-        x_train = (x_train - x_min) / (x_max - x_min)
+        with open(path_conf + "/norm_info.pickle", "rb") as f: 
+            norm_info = pickle.load(f)
+        self.norm_info = norm_info
 
-        # y_max = np.max(np.max(y_train, axis=0), axis=0).reshape(1, 1, dim_y)
-        # y_min = np.min(np.min(y_train, axis=0), axis=0).reshape(1, 1, dim_y)
-        # y_train = (y_train - y_min) / (y_max - y_min)
-        # y_train = y_train * config.scale_inputs
-        y_train = np.log(y_train)
-        y_train = (y_train - np.mean(y_train.reshape(-1))) / np.std(y_train.reshape(-1))
+        x_train = norm_dnn_data.normalize_x(x_train, norm_info)
+        y_train = norm_dnn_data.normalize_y(y_train, norm_info)
+
+        # fig, ax = plt.subplots()
+        # for i in range(N_train):
+        #     ax.plot(y_train[i, :, 0])
+        # plt.show()
 
         self.N_train = N_train
         self.step    = step
@@ -90,11 +91,11 @@ class RUN_PREDICT:
         self.y_train = y_train
 
 
-        # self.predict_test1(mean_var=True)
-        # self.predict_test1(mean_var=False)
-        # self.predict_test_train(mean_var=True)
-        # self.predict_test_train(mean_var=False)
-        self.predict_test2()
+        self.predict_test1(mean_var=True)
+        self.predict_test1(mean_var=False)
+        self.predict_test_train(mean_var=True)
+        self.predict_test_train(mean_var=False)
+        # self.predict_test2()
 
         # for n in range(N_test):
         #     fig, ax = plt.subplots()
@@ -137,10 +138,9 @@ class RUN_PREDICT:
                 lower = mean - 2.0*std
                 upper = mean + 2.0*std
                 x = range(self.step)
-                color_true = "fuchsia"
                 color_fill = "skyblue"
                 ax.fill_between(x, lower, upper, alpha=0.6, color=color_fill)
-                ax.plot(x, mean,  "-",  color=color_true)
+                ax.plot(x, mean,  "-",  color="b")
 
             ax.plot(y_test[n, :, 0], color="k")
             plt.show()
@@ -194,9 +194,16 @@ class RUN_PREDICT:
 
         y_predict = self.model.predict(x_test.reshape(-1, self.dim_x))
         y_predict = np.stack(y_predict, axis=-1)
-        
+
         y_mean = np.mean(y_predict, axis=-1)
+
+
+
         y_true = y_test.reshape(-1, self.dim_y) 
+        
+        y_mean    = norm_dnn_data.denormalize_y(y_mean,    self.norm_info)
+        y_true    = norm_dnn_data.denormalize_y(y_true,    self.norm_info)
+        y_predict = norm_dnn_data.denormalize_y(y_predict, self.norm_info)
         
         y_min = np.concatenate([y_mean, y_true], axis=-1).reshape(-1).min()
         y_max = np.concatenate([y_mean, y_true], axis=-1).reshape(-1).max()
@@ -218,6 +225,9 @@ class RUN_PREDICT:
             ax.set_xlabel('y_true')
             ax.set_ylabel('y_predict')
             plt.show()
+
+
+
 
 
 if __name__ == "__main__":
