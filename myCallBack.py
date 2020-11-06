@@ -1,15 +1,22 @@
 import time
+import pickle
 import datetime
 import tensorflow as tf
 
 
 
 class MYCallBack(tf.keras.callbacks.Callback):
-    def __init__(self):
+    def __init__(self, learning_info_dir=None):
         self.last_acc, self.last_loss, self.last_val_acc, self.last_val_loss = None, None, None, None
         self.now_batch, self.now_epoch = None, None
 
         self.epochs, self.samples, self.batch_size = None, None, None
+
+        self.learning_info_dir = learning_info_dir
+        self.learning_info = dict()
+        self.learning_info["loss"] = []
+        self.learning_info["acc"]  = []
+        self.learning_info["time"] = []
 
         self.start_run = time.time()
 
@@ -24,7 +31,17 @@ class MYCallBack(tf.keras.callbacks.Callback):
         sample = batch_size*(batch)
 
         time_epoch = self.stop_epoch - self.start_epoch
-        print("Epoch %d/%d (%d/%d) -- acc: %f loss: %3f " % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss) + "time:" + str(time_epoch) + " \n", end='')
+        print_text = "Epoch %d/%d (%d/%d) -- acc: %f loss: %3f " % (epoch+1, epochs, sample, samples, self.last_acc, self.last_loss) + "time:" + str(time_epoch)
+        print(print_text)
+
+        with open(self.learning_info_dir + "/learning_info.txt", "a") as f:
+            f.write(print_text + " \n")
+
+        self.learning_info["loss"].append(self.last_loss)
+        self.learning_info["acc"].append(self.last_acc)
+        self.learning_info["time"].append(time_epoch)
+        with open(self.learning_info_dir + "/learning_info.pickle", "wb") as f:
+            pickle.dump(self.learning_info, f)
 
 
     # fit開始時
@@ -54,11 +71,11 @@ class MYCallBack(tf.keras.callbacks.Callback):
         # 進捗表示
         # self.print_progress()
 
-
     # epoch開始時
     def on_epoch_begin(self, epoch, log={}):
         self.now_epoch   = epoch
         self.start_epoch = time.time()
+
 
     # epoch完了時 (進捗表示)
     def on_epoch_end(self, epoch, logs={}):

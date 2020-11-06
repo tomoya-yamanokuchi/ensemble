@@ -149,11 +149,11 @@ class RUN_DNN:
 
         self.plot_hist(y_train.reshape(-1))
 
-        fig, ax = plt.subplots()
-        for i in range(N_train):
-            ax.plot(y_train[i, :, 0])
-        # ax.set_yscale('log')
-        plt.show()
+        # fig, ax = plt.subplots()
+        # for i in range(N_train):
+        #     ax.plot(y_train[i, :, 0])
+        # # ax.set_yscale('log')
+        # plt.show()
 
 
         # # ================
@@ -182,41 +182,17 @@ class RUN_DNN:
         # =================
         #    validation 
         # =================
-        N_valid = int(N_train*0.3)
-        ind_valid = range(N_valid)
-        ind_valid = np.random.choice(ind_valid, N_valid, replace=True)
-        y_valid = y_train[ind_valid]
-        x_valid = x_train[ind_valid]
-
-        # fig, ax = plt.subplots(1,2, figsize=(12, 5))
-        # for i in range(N_valid):
-        #     for d in range(2): 
-        #         ax[d].plot(x_valid[i, :, d])
-        # plt.show()
-
-
-        # x_test = x_train.reshape(-1, 9, 2)
-        # N_test = x_test.shape[0]
-        # fig, ax = plt.subplots()
-        # for i in range(N_test):
-        #     ax.plot(x_test[i, :, 0])
-        # plt.show()
-
-
-        # # for i in range(N_train): 
-        # #     ax.hist(y_train[i])
-        # ax.hist(y_train)
-        # plt.show()
-
-        # fig, ax = plt.subplots()
-        # for i in range(N_train): 
-        #     ax.plot(x_train1[i, :, 0])
-        # plt.show()
-
-        # fig, ax = plt.subplots()
-        # for i in range(N_train): 
-        #     ax.plot(x_train2[i, :, 0])
-        # plt.show()
+        ratio_valid = 0.1
+        N_valid     = int(N_train*0.1)
+        index_valid = list([int(i) for i in np.linspace(0, N_train-1, N_valid)])
+        index_all   = list(range(N_train))
+        # 1st: validation
+        x_valid = x_train[index_valid]
+        y_valid = y_train[index_valid]
+        # 2nd: training
+        index_train = list(set(index_all) - set(index_valid))
+        x_train = x_train[index_train]
+        y_train = y_train[index_train]
 
 
         session_config = ConfigProto()
@@ -247,7 +223,7 @@ class RUN_DNN:
                                                         verbose=0,
                                                         period=config.epoch)
 
-        mycb = MYCallBack()
+        mycb = MYCallBack(config.log_dir)
 
 
         session_config = ConfigProto()

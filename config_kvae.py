@@ -43,7 +43,7 @@ def get_image_config():
     # cl.DEFINE_string('units',  '200, 200, 200, 200', 'units')
 
     # optimizer setting
-    cl.DEFINE_integer('epoch',        3000,   'epoch')
+    cl.DEFINE_integer('epoch',        1000,   'epoch')
     if 'batch_size' not in keys_list: 
         cl.DEFINE_integer('batch_size',    32,    'batch_size')
     if 'learning_rate' not in keys_list: 

@@ -46,6 +46,7 @@ class RUN_PREDICT:
     def run(self): 
         path_conf = "./logs/N_ensemble5_20201105035501"
         # path_conf = "./logs/N_ensemble5_20201105035349"
+        path_conf = "./logs/N_ensemble1_20201106171316"
 
         config = get_image_config()
         config.FLAGS.reload_model = path_conf + "/"
@@ -90,11 +91,11 @@ class RUN_PREDICT:
         self.x_train = x_train
         self.y_train = y_train
 
-        # self.predict_both()
+        self.predict_both(N_test=6)
         # self.predict_test1(mean_var=True)
         # self.predict_test1(mean_var=False)
         # self.predict_test_train(mean_var=True)
-        # self.predict_test_train(mean_var=False)
+        self.predict_test_train(mean_var=False)
         self.predict_test2()
 
         # for n in range(N_test):
@@ -146,9 +147,9 @@ class RUN_PREDICT:
             plt.show()
 
 
-    def predict_both(self): 
+    def predict_both(self, N_test): 
         N_ensemble = self.N_ensemble
-        N_test = 3
+        # N_test = 3
 
         ind_test = np.linspace(0, self.N_train-1, N_test, dtype=int)
         x_test = self.x_train[ind_test]
