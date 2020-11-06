@@ -90,12 +90,12 @@ class RUN_PREDICT:
         self.x_train = x_train
         self.y_train = y_train
 
-
-        self.predict_test1(mean_var=True)
-        self.predict_test1(mean_var=False)
-        self.predict_test_train(mean_var=True)
-        self.predict_test_train(mean_var=False)
-        # self.predict_test2()
+        # self.predict_both()
+        # self.predict_test1(mean_var=True)
+        # self.predict_test1(mean_var=False)
+        # self.predict_test_train(mean_var=True)
+        # self.predict_test_train(mean_var=False)
+        self.predict_test2()
 
         # for n in range(N_test):
         #     fig, ax = plt.subplots()
@@ -127,37 +127,84 @@ class RUN_PREDICT:
         y_predict = np.stack(y_predict, axis=-1).reshape(N_test, self.step, self.dim_y, N_ensemble)
 
         for n in range(N_test):
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(3, 3))
 
             if mean_var is False: 
                 for m in range(N_ensemble):
-                    ax.plot(y_predict[n, :, 0, m], color="r")
+                    ax.plot(y_predict[n, :, 0, m], color="mediumvioletred")
             else: 
                 mean  = np.mean(y_predict[n, :, 0, :], axis=-1)
                 std   = np.std( y_predict[n, :, 0, :], axis=-1)
                 lower = mean - 2.0*std
                 upper = mean + 2.0*std
                 x = range(self.step)
-                color_fill = "skyblue"
+                color_fill = "thistle"
                 ax.fill_between(x, lower, upper, alpha=0.6, color=color_fill)
-                ax.plot(x, mean,  "-",  color="b")
+                ax.plot(x, mean,  "-",  color="mediumvioletred")
 
             ax.plot(y_test[n, :, 0], color="k")
             plt.show()
 
 
+    def predict_both(self): 
+        N_ensemble = self.N_ensemble
+        N_test = 3
+
+        ind_test = np.linspace(0, self.N_train-1, N_test, dtype=int)
+        x_test = self.x_train[ind_test]
+        y_test = self.y_train[ind_test]
+
+        y_predict = self.model.predict(x_test.reshape(-1, self.dim_x))
+        y_predict = np.stack(y_predict, axis=-1).reshape(N_test, self.step, self.dim_y, N_ensemble)
+
+        fig, ax = plt.subplots(2, N_test, figsize=(9, 6))
+        for n in range(N_test):
+            for m in range(N_ensemble):
+                ax[0, n].plot(y_predict[n, :, 0, m], color="mediumvioletred", label="DNN predict")
+            ax[0, n].plot(y_test[n, :, 0], color="k", label="Ground Truth")
+
+            mean  = np.mean(y_predict[n, :, 0, :], axis=-1)
+            std   = np.std( y_predict[n, :, 0, :], axis=-1)
+            lower = mean - 2.0*std
+            upper = mean + 2.0*std
+            x = range(self.step)
+            color_fill = "thistle"
+            ax[1, n].fill_between(x, lower, upper, alpha=0.6, color=color_fill)
+            ax[1, n].plot(x, mean,  "-",  color="mediumvioletred", label="DNN predict")
+            ax[1, n].plot(y_test[n, :, 0], color="k", label="Ground Truth")
+
+            ax[1, n].set_xlabel("Step", fontsize=18)
+            if n == 0: 
+                ax[0, n].set_ylabel(r"$ e_{t_+1} $", fontsize=18)
+                ax[1, n].set_ylabel(r"$ e_{t_+1} $", fontsize=18)
+
+        lines = []
+        labels = []
+        for _ax in fig.axes:
+            axLine, axLabel = _ax.get_legend_handles_labels()
+            lines.extend(axLine)
+            labels.extend(axLabel)
+        # fig.legend(lines, labels[:5], bbox_to_anchor=(0.75, 0.95,), ncol=5, fontsize=16)
+        fig.legend(lines[5:7], labels[5:7], loc="upper center", ncol=2, fontsize=14)
+
+        plt.show()
+
 
     def predict_test2(self): 
         # self.x_train.reshape(-1, self.dim_x)[:, 0]
-        N_mesh = 100
-        x_test = np.tile(np.linspace(-0.5, 1.5, N_mesh).reshape(-1, 1), (1, self.dim_x))
-
-        X1, X2 = np.meshgrid(x_test[:, 0], x_test[:, 1])
-        X_TEST = np.concatenate([X1.reshape(-1, 1), X2.reshape(-1, 1)], axis=-1)
 
         ind_alpha  = -100
         N_zu = 100
-        zu_add     = np.tile(self.x_train[ind_alpha, 4, :2].reshape(1, 2), (N_zu, 1))
+        zu_add = np.tile(self.x_train[ind_alpha, 4, :2].reshape(1, 2), (N_zu, 1))
+        zu = zu_add[0]
+        print("zu: ", zu)
+
+        N_mesh = 100
+        x1 = np.linspace(zu[0] - zu[0]*0.01, zu[0] + zu[0]*0.01, N_mesh)
+        x2 = np.linspace(zu[1] - zu[1]*0.01, zu[1] + zu[1]*0.01, N_mesh)
+        X1, X2 = np.meshgrid(x1, x2)
+        X_TEST = np.concatenate([X1.reshape(-1, 1), X2.reshape(-1, 1)], axis=-1)
+
         X_TEST_add = np.tile(self.x_train[ind_alpha, 4, -3:].reshape(1, -1), (N_mesh**2, 1))
         X_TEST     = np.concatenate([X_TEST, X_TEST_add], axis=-1)
 
@@ -167,21 +214,35 @@ class RUN_PREDICT:
         y_predict = self.model.predict(X_TEST)
         y_predict = np.stack(y_predict, axis=-1)
 
+        # clip
+        clip_max_y = 1.1
+        clip_min_y = 0.7
+        y_predict = np.minimum(clip_max_y, y_predict)
+        y_predict = np.maximum(clip_min_y, y_predict)
+
         fig = plt.figure(figsize=(8,6))
         ax3d = plt.axes(projection="3d")
         ax3d = plt.axes(projection='3d')
 
-        yy = np.minimum(1,  y_predict)
-        yy = np.maximum(-1, y_predict)
+        # yy = np.minimum(1.2,  y_predict)
+        # yy = np.maximum(0.5, y_predict)
         # for m in range(N_ensemble): 
         for m in range(1): 
-            ax3d.plot_surface(X1, X2, yy[:, 0, m].reshape(N_mesh, N_mesh),cmap='plasma')
-        ax3d.plot(zu_add[:, 0], zu_add[:, 1], np.linspace(-1.2, 1.2, N_zu),  markersize=30, color="r")
+            ax3d.plot_surface(X1, X2, y_predict[:, 0, m].reshape(N_mesh, N_mesh),cmap='plasma')
+        # ax3d.plot(zu_add[:, 0], zu_add[:, 1], np.linspace(-1.2, 1.2, N_zu),  markersize=30, color="r")
         ax3d.set_title('Surface Plot in Matplotlib')
         ax3d.set_xlabel('X')
         ax3d.set_ylabel('Y')
         ax3d.set_zlabel('Z')
-        ax3d.set_zlim([-1.2, 1.2])
+        # ax3d.set_zlim([-1.2, 1.2])
+
+
+        x = zu[0]
+        y = x2
+        z = np.linspace(clip_min_y, clip_max_y, N_mesh)
+        Y,Z = np.meshgrid(y,z)
+        X = np.array([x]*Y.shape[0])
+        ax3d.plot_surface(X,Y,Z,alpha=0.3)
 
         plt.show()
 

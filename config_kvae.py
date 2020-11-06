@@ -27,7 +27,7 @@ def get_image_config():
     keys_list = [keys for keys in flags_dict]
 
     if 'gpu' not in keys_list: 
-        cl.DEFINE_string('gpu', '0', 'Comma seperated list of GPUs')
+        cl.DEFINE_string('gpu', '1', 'Comma seperated list of GPUs')
     if 'dataset' not in keys_list: 
         cl.DEFINE_string('dataset', '/home/dl-box/jst/python_code/drkvae/master/logs/plane_64x64_N2800_seq10_20201029133630_20201029141634_kvae/1step_prediction_error_data/pred_error_from_random.npz', 'dataset')
     
@@ -38,9 +38,9 @@ def get_image_config():
     # network setting
     cl.DEFINE_integer('dim_inputs',    5,   'dim_inputs')
     cl.DEFINE_integer('dim_outputs',   1,   'dim_outputs')
-    cl.DEFINE_integer('N_ensemble',    5,   'N_ensemble')
-    # cl.DEFINE_string('units',  '512, 512, 512', 'units')
-    cl.DEFINE_string('units',  '200, 200, 200, 200', 'units')
+    cl.DEFINE_integer('N_ensemble',    1,   'N_ensemble')
+    cl.DEFINE_string('units',  '512, 512, 512', 'units')
+    # cl.DEFINE_string('units',  '200, 200, 200, 200', 'units')
 
     # optimizer setting
     cl.DEFINE_integer('epoch',        3000,   'epoch')

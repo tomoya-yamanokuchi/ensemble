@@ -40,28 +40,29 @@ class RUN_DNN:
 
 
     def plot_inputs_scatter(self, x, y): 
-        cm = plt.cm.get_cmap('RdYlBu')
+        # cm = plt.cm.get_cmap('RdYlBu')
 
-        fig = plt.figure()        
-        ax = fig.add_subplot(1, 1, 1)
+        # fig = plt.figure()        
+        # ax = fig.add_subplot(1, 1, 1)
         
-        for i in range(x.shape[0]): 
-            print(" - {0}/{1}".format(i, x.shape[0]))
-            mappable = ax.scatter(x[i, :, 0], x[i, :, 1], c=y[i, :, 0], vmin=0, vmax=20, s=10, cmap=cm, lw=0)
+        # for i in range(x.shape[0]): 
+        #     print(" - {0}/{1}".format(i, x.shape[0]))
+        #     mappable = ax.scatter(x[i, :, 0], x[i, :, 1], c=y[i, :, 0], vmin=0, vmax=20, s=10, cmap=cm, lw=0)
 
-        fig.colorbar(mappable, ax=ax)
-        plt.show()
+        # mappable = ax.scatter(x[i, :, 0], x[i, :, 1], c=y[i, :, 0], vmin=0, vmax=20, s=10, cmap=cm, lw=0)
+        # fig.colorbar(mappable, ax=ax)
+        # plt.show()
 
 
-        # import seaborn as sns
-        # import pandas as pd
-        # import matplotlib.cm as cm
+        import seaborn as sns
+        import pandas as pd
+        import matplotlib.cm as cm
 
-        # data = pd.DataFrame(x, columns=["state", "control"])
-        # ax1 = sns.jointplot(x="state", y='control', data=data, kind='hex')
-        # # ax1.ax_joint.cla()
-        # # plt.sca(ax1.ax_joint)
-        # # plt.hist2d(data["state"], data["control"], bins=(100, 100), cmap=cm.jet)
+        data = pd.DataFrame(x, columns=["state", "control"])
+        ax1 = sns.jointplot(x="state", y='control', data=data, kind='hex')
+        # ax1.ax_joint.cla()
+        # plt.sca(ax1.ax_joint)
+        # plt.hist2d(data["state"], data["control"], bins=(100, 100), cmap=cm.jet)
 
         plt.show()
 
@@ -171,10 +172,10 @@ class RUN_DNN:
         # ================
         #   histgram
         # ================
-        g = y_train.reshape(-1)
-        fig, ax = plt.subplots()
-        plt.hist(g)
-        plt.show()
+        # g = y_train.reshape(-1)
+        # fig, ax = plt.subplots()
+        # plt.hist(g)
+        # plt.show()
 
 
 
