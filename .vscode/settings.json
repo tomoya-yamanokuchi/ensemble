@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "/home/dl-box/.venv_python3/bin/python"
+    "python.pythonPath": "/home/tomoya-y/.venv_python3/bin/python", 
+    "editor.fontFamily": "Ubuntu Mono", 
+    "editor.fontSize": 16
 }
