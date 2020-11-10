@@ -100,7 +100,7 @@ class RUN_PREDICT:
 
         N_train, step, dim_x = x_train.shape
 
-        # self.plot_DataFrame(x_train1)
+        self.plot_DataFrame(x_train1)
 
         # fig, ax = plt.subplots(figsize=(6, 5))
         # for d in range(dim_x): 
