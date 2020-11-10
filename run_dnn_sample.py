@@ -67,7 +67,7 @@ config.log_dir = os.path.join(config.log_dir, run_name)
 if not os.path.isdir(config.log_dir):
     os.makedirs(config.log_dir)
 with open(config.log_dir + '/config.json', 'w') as f:
-    json.dump(config.flag_values_dict(), f)
+    json.dump(config.flag_values_dict(), f, ensure_ascii=False, indent=4, separators=(',', ': '))
 
 
 session_config = ConfigProto()

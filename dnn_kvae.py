@@ -34,20 +34,6 @@ class DNNModel:
         outputs = Dense(self.dim_outputs)(x)
         return keras.Model(inputs, outputs)
 
-        # inputs  = keras.layers.Input(shape=(self.dim_inputs,))
-        # x       = Dense(500, activation=self.swish)(inputs)
-        # x       = Dense(500, activation=self.swish)(x)
-        # x       = Dense(500, activation=self.swish)(x)
-        # outputs = Dense(self.dim_outputs)(x)
-        # return keras.Model(inputs, outputs)
-
-        # inputs  = keras.layers.Input(shape=(self.dim_inputs,))
-        # x       = Dense(64, activation=self.swish)(inputs)
-        # x       = Dense(128, activation=self.swish)(x)
-        # x       = Dense(32, activation=self.swish)(x)
-        # outputs = Dense(self.dim_outputs)(x)
-        # return keras.Model(inputs, outputs)
-
 
     def nn_ensemble(self, N_ensemble):
         self.N_ensemble = N_ensemble

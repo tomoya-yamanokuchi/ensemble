@@ -13,7 +13,8 @@ from tensorflow.compat.v1 import ConfigProto
 from mpl_toolkits.mplot3d import Axes3D
 
 from dnn_kvae import DNNModel
-from config_kvae import reload_config, get_image_config
+# from config_kvae import reload_config, get_image_config
+from config_seesaw import reload_config, get_image_config
 from myCallBack import MYCallBack
 
 
@@ -39,7 +40,7 @@ class RUN_DNN:
         print()
 
 
-    def plot_inputs_scatter(self, x, y): 
+    def plot_inputs_scatter(self, x, y, x_colomuns): 
         # cm = plt.cm.get_cmap('RdYlBu')
 
         # fig = plt.figure()        
@@ -58,7 +59,7 @@ class RUN_DNN:
         import pandas as pd
         import matplotlib.cm as cm
 
-        data = pd.DataFrame(x, columns=["state", "control"])
+        data = pd.DataFrame(x, columns=x_colomuns)
         ax1 = sns.jointplot(x="state", y='control', data=data, kind='hex')
         # ax1.ax_joint.cla()
         # plt.sca(ax1.ax_joint)
@@ -80,7 +81,7 @@ class RUN_DNN:
         if not os.path.isdir(config.log_dir):
             os.makedirs(config.log_dir)
         with open(config.log_dir + '/config.json', 'w') as f:
-            json.dump(config.flag_values_dict(), f)
+            json.dump(config.flag_values_dict(), f, ensure_ascii=False, indent=4, separators=(',', ': '))
 
 
         # =================
@@ -94,20 +95,31 @@ class RUN_DNN:
         x_train  = np.concatenate([x_train1, x_train2, x_train3], axis=-1)
 
         N_train, step, dim_x = x_train.shape
-        dim_y = config.dim_outputs
 
+        # for i in range(dim_x): 
+        #     self.plot_line(y_train[:, :, i])
 
-        # self.plot_inputs_scatter(x_train, np.log(y_train))
+        y_train = np.expand_dims(np.sum(y_train, axis=-1), axis=-1)
+        N_train, step, dim_y = y_train.shape
+
+        print("=====================")
+        print("   N_train : ", N_train) 
+        print("      step : ",   step)
+        print("     dim_x : ",  dim_x)
+        print("     dim_y : ",  dim_y)
+        print("=====================")
+
+        # self.plot_inputs_scatter(x_train, np.log(y_train), x_colomuns=["0"]*dim_x)
         # self.plot_inputs_scatter(x_train.reshape(-1, dim_x)[:, :2], np.log(y_train).reshape(-1, dim_y))
 
         # self.plot_hist(x_train1.reshape(-1))
         # self.plot_hist(np.log(x_train1.reshape(-1)))
         # self.plot_hist(x_train1.reshape(-1))
 
-
         x_max = np.max(np.max(x_train, axis=0), axis=0).reshape(1, 1, dim_x)
         x_min = np.min(np.min(x_train, axis=0), axis=0).reshape(1, 1, dim_x)
         x_train = (x_train - x_min) / (x_max - x_min)
+
 
         # for i in range(dim_x): 
         #     self.plot_line(x_train[:, :, i])
@@ -124,6 +136,13 @@ class RUN_DNN:
         # for i in range(N_train):
         #     for d in range(2): 
         #         ax[d].plot(x_train[i, :, d])
+        # plt.show()
+
+        # self.plot_hist(y_train.reshape(-1))
+        # fig, ax = plt.subplots()
+        # for i in range(N_train):
+        #     ax.plot(y_train[i, :, 0])
+        # # ax.set_yscale('log')
         # plt.show()
 
 
@@ -147,7 +166,7 @@ class RUN_DNN:
             pickle.dump(norm_info, f)
 
 
-        self.plot_hist(y_train.reshape(-1))
+        # self.plot_hist(y_train.reshape(-1))
 
         # fig, ax = plt.subplots()
         # for i in range(N_train):

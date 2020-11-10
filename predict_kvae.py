@@ -3,8 +3,11 @@ import os
 import pickle
 import time
 import copy
+import seaborn as sns
 import subprocess
+import pandas as pd
 import numpy as np
+from scipy import stats
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -28,7 +31,30 @@ class RUN_PREDICT:
 
 
     def plot_line(self, x): 
+        seq, step = x.shape
+        fig, ax = plt.subplots()
+        for s in range(seq): 
+            ax.plot(x[s, :])
+        plt.show()
         print()
+
+    def plot_DataFrame(self, x):
+        # x = np.random.randn(10, 30, 4)
+        x = np.transpose(x, (1, 0, 2))
+        step, N, dim_x = x.shape
+        sns.set()
+
+        fig, ax = plt.subplots(nrows=1, ncols=dim_x, figsize=(9, 6))
+        for d in range(dim_x): 
+            df = pd.DataFrame(x[:,:,d], columns=range(N))
+            df.cumsum()
+            df.plot(ax=ax[d], legend=False)
+        plt.show()
+
+        # for d in range(dim_x): 
+        #     df = pd.DataFrame(x[:,:,d], columns=range(N))
+        #     df.cumsum().plot()
+        #     plt.show()
 
     
     def plot_3d(self, x, y, z):
@@ -47,6 +73,9 @@ class RUN_PREDICT:
         path_conf = "./logs/N_ensemble5_20201105035501"
         # path_conf = "./logs/N_ensemble5_20201105035349"
         path_conf = "./logs/N_ensemble1_20201106171316"
+        path_conf = "./logs/N_ensemble1_20201109212153"
+        path_conf = "./logs/N_ensemble5_20201110062703"
+        path_conf = "./logs/N_ensemble5_20201110062835"
 
         config = get_image_config()
         config.FLAGS.reload_model = path_conf + "/"
@@ -70,14 +99,43 @@ class RUN_PREDICT:
         x_train  = np.concatenate([x_train1, x_train2, x_train3], axis=-1)
 
         N_train, step, dim_x = x_train.shape
-        dim_y = config.dim_outputs
+
+        # self.plot_DataFrame(x_train1)
+
+        # fig, ax = plt.subplots(figsize=(6, 5))
+        # for d in range(dim_x): 
+        #     plt.cla()
+
+        # for i in range(N_train):
+        #     ax.plot(x_train[i, :, 5])
+        # plt.show()
+
+        # for i in range(dim_x): 
+        #     self.plot_hist(x_train.reshape(-1, dim_x)[:, i])
+
+        # for i in range(y_train.shape[-1]): 
+        #     self.plot_line(y_train[:, :, i])
+
+
+        y_train = np.expand_dims(np.sum(y_train, axis=-1), axis=-1)
+        N_train, step, dim_y = y_train.shape
+
+        print("=====================")
+        print("   N_train : ", N_train) 
+        print("      step : ",   step)
+        print("     dim_x : ",  dim_x)
+        print("     dim_y : ",  dim_y)
+        print("=====================")
 
         with open(path_conf + "/norm_info.pickle", "rb") as f: 
             norm_info = pickle.load(f)
         self.norm_info = norm_info
 
-        x_train = norm_dnn_data.normalize_x(x_train, norm_info)
+        x_train = norm_dnn_data.normalize_x(x_train.reshape(-1, dim_x), norm_info)
+        x_train = x_train.reshape(N_train, step, dim_x)
+
         y_train = norm_dnn_data.normalize_y(y_train, norm_info)
+
 
         # fig, ax = plt.subplots()
         # for i in range(N_train):
@@ -94,7 +152,7 @@ class RUN_PREDICT:
         self.predict_both(N_test=6)
         # self.predict_test1(mean_var=True)
         # self.predict_test1(mean_var=False)
-        # self.predict_test_train(mean_var=True)
+        self.predict_test_train(mean_var=True)
         self.predict_test_train(mean_var=False)
         self.predict_test2()
 
