@@ -38,17 +38,24 @@ class RUN_PREDICT:
         plt.show()
         print()
 
-    def plot_DataFrame(self, x):
+    def plot_DataFrame(self, x, ylabel="ylabel", figsize=(10, 5)):
         # x = np.random.randn(10, 30, 4)
         x = np.transpose(x, (1, 0, 2))
         step, N, dim_x = x.shape
         sns.set()
 
-        fig, ax = plt.subplots(nrows=1, ncols=dim_x, figsize=(9, 6))
+        fig, ax = plt.subplots(nrows=1, ncols=dim_x, figsize=figsize)
         for d in range(dim_x): 
             df = pd.DataFrame(x[:,:,d], columns=range(N))
             df.cumsum()
-            df.plot(ax=ax[d], legend=False)
+            if dim_x == 1: 
+                df.plot(ax=ax, legend=False)
+            else: 
+                df.plot(ax=ax[d], legend=False)
+
+        ax.set_xlim([0, step-1])
+        ax.set_ylabel(ylabel)
+        ax.set_xlabel("step")
         plt.show()
 
         # for d in range(dim_x): 
@@ -76,6 +83,7 @@ class RUN_PREDICT:
         path_conf = "./logs/N_ensemble1_20201109212153"
         path_conf = "./logs/N_ensemble5_20201110062703"
         path_conf = "./logs/N_ensemble5_20201110062835"
+        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_1direction_with_wall_wide_20201109144339_kvae20201112013225"
 
         config = get_image_config()
         config.FLAGS.reload_model = path_conf + "/"
@@ -100,7 +108,8 @@ class RUN_PREDICT:
 
         N_train, step, dim_x = x_train.shape
 
-        self.plot_DataFrame(x_train1)
+        # self.plot_DataFrame(x_train2, figsize=(3, 3))
+        # self.plot_DataFrame(x_train1, figsize=(10, 5))
 
         # fig, ax = plt.subplots(figsize=(6, 5))
         # for d in range(dim_x): 
@@ -136,6 +145,7 @@ class RUN_PREDICT:
 
         y_train = norm_dnn_data.normalize_y(y_train, norm_info)
 
+        self.plot_DataFrame(np.expand_dims(x_train[:, :, 4], axis=-1), ylabel="u (control)", figsize=(6, 5))
 
         # fig, ax = plt.subplots()
         # for i in range(N_train):
@@ -153,8 +163,8 @@ class RUN_PREDICT:
         # self.predict_test1(mean_var=True)
         # self.predict_test1(mean_var=False)
         self.predict_test_train(mean_var=True)
-        self.predict_test_train(mean_var=False)
-        self.predict_test2()
+        # self.predict_test_train(mean_var=False)
+        # self.predict_test2()
 
         # for n in range(N_test):
         #     fig, ax = plt.subplots()

@@ -29,7 +29,9 @@ def get_image_config():
     if 'gpu' not in keys_list: 
         cl.DEFINE_string('gpu', '1', 'Comma seperated list of GPUs')
     if 'dataset' not in keys_list: 
-        cl.DEFINE_string('dataset', '/home/dl-box/jst/python_code/drkvae/master/logs/plane_64x64_N2800_seq10_20201029133630_20201029141634_kvae/1step_prediction_error_data/pred_error_from_random.npz', 'dataset')
+        kvae_model = "plane_64x64_N2800_seq10_20201029133630_20201029141634_kvae"
+        cl.DEFINE_string('kvae_model', kvae_model, 'kvae_model')
+        cl.DEFINE_string('dataset', "/home/dl-box/jst/python_code/drkvae/master/logs/" + kvae_model + "/1step_prediction_error_data/pred_error_from_random.npz", 'dataset')
     
     # feature transformation 
     cl.DEFINE_float('scale_inputs',  100,   'scale_inputs')

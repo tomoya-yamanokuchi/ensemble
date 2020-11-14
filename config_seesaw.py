@@ -27,10 +27,13 @@ def get_image_config():
     keys_list = [keys for keys in flags_dict]
 
     if 'gpu' not in keys_list: 
-        cl.DEFINE_string('gpu', '1', 'Comma seperated list of GPUs')
+        cl.DEFINE_string('gpu', '0', 'Comma seperated list of GPUs')
+    if 'kvae_model' not in keys_list: 
+        kvae_model = "seesaw_64x64_N5000_seq30_cem_1direction_with_wall_wide_20201112020341_kvae"
+        cl.DEFINE_string('kvae_model', kvae_model, 'kvae_model')
     if 'dataset' not in keys_list: 
-        cl.DEFINE_string('dataset', '/hdd_mount/logs/seesaw_64x64_N5000_seq30_cem_1direction_with_wall_wide_20201109144516_kvae/1step_prediction_error_data/pred_error_from_random.npz', 'dataset')
-    
+        cl.DEFINE_string('dataset', "/hdd_mount/logs/" + kvae_model + "/1step_prediction_error_data/pred_error_from_random.npz", 'dataset')
+
     # feature transformation 
     cl.DEFINE_float('scale_inputs',  100,   'scale_inputs')
     cl.DEFINE_float('bias',         0,   'bias') # 1e-7
@@ -43,7 +46,7 @@ def get_image_config():
     # cl.DEFINE_string('units',  '200, 200, 200, 200', 'units')
 
     # optimizer setting
-    cl.DEFINE_integer('epoch',        500,   'epoch')
+    cl.DEFINE_integer('epoch',        1000,   'epoch')
     if 'batch_size' not in keys_list: 
         cl.DEFINE_integer('batch_size',    64,    'batch_size')
     if 'learning_rate' not in keys_list: 

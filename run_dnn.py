@@ -76,7 +76,7 @@ class RUN_DNN:
 
         # Save hyperparameters
         config.log_dir = "logs"
-        run_name = "N_ensemble{}_".format(config.N_ensemble) + time.strftime('%Y%m%d%H%M%S', time.localtime())
+        run_name = "ensemble_M{}_".format(config.N_ensemble) + config.kvae_model + "_" + time.strftime('%Y%m%d%H%M%S', time.localtime())
         config.log_dir = os.path.join(config.log_dir, run_name)
         if not os.path.isdir(config.log_dir):
             os.makedirs(config.log_dir)
