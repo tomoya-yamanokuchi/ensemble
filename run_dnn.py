@@ -96,8 +96,16 @@ class RUN_DNN:
 
         N_train, step, dim_x = x_train.shape
 
+        # self.plot_hist(y_train.reshape(-1))
+
+        # fig, ax = plt.subplots()
+        # for i in range(N_train):
+        #     ax.plot(y_train[i, :, 0])
+        # # ax.set_yscale('log')
+        # plt.show()
+
         # for i in range(dim_x): 
-        #     self.plot_line(y_train[:, :, i])
+        #     self.plot_line(x_train[:, :, i])
 
         y_train = np.expand_dims(np.sum(y_train, axis=-1), axis=-1)
         N_train, step, dim_y = y_train.shape

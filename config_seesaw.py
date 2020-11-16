@@ -29,7 +29,7 @@ def get_image_config():
     if 'gpu' not in keys_list: 
         cl.DEFINE_string('gpu', '0', 'Comma seperated list of GPUs')
     if 'kvae_model' not in keys_list: 
-        kvae_model = "seesaw_64x64_N5000_seq30_cem_1direction_with_wall_wide_20201112020341_kvae"
+        kvae_model = "seesaw_64x64_N5000_seq30_cem_1direction_with_wall_wide_20201109175623_kvae"
         cl.DEFINE_string('kvae_model', kvae_model, 'kvae_model')
     if 'dataset' not in keys_list: 
         cl.DEFINE_string('dataset', "/hdd_mount/logs/" + kvae_model + "/1step_prediction_error_data/pred_error_from_random.npz", 'dataset')
