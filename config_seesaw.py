@@ -20,43 +20,46 @@ def reload_config(FLAGS):
     return FLAGS
 
 
+def cl_define_with_key_check(tf_app_flags, keys_list, define_type, define_name, default_item):
+    if   define_type == "string" :  
+        if define_name not in keys_list: 
+            tf_app_flags.DEFINE_string(define_name, default_item, define_name)
+    elif define_type == "integer":  
+        if define_name not in keys_list: 
+            tf_app_flags.DEFINE_integer(define_name, default_item, define_name)
+    elif define_type == "float"  :  
+        if define_name not in keys_list:
+            tf_app_flags.DEFINE_float(define_name, default_item, define_name)
+
+
 def get_image_config():
     cl = tf.app.flags
 
     flags_dict = tf.flags.FLAGS._flags()
     keys_list = [keys for keys in flags_dict]
 
-    if 'gpu' not in keys_list: 
-        cl.DEFINE_string('gpu', '0', 'Comma seperated list of GPUs')
-    if 'kvae_model' not in keys_list: 
-        kvae_model = "seesaw_64x64_N5000_seq30_cem_1direction_with_wall_wide_20201109175623_kvae"
-        cl.DEFINE_string('kvae_model', kvae_model, 'kvae_model')
-    if 'dataset' not in keys_list: 
-        cl.DEFINE_string('dataset', "/hdd_mount/logs/" + kvae_model + "/1step_prediction_error_data/pred_error_from_random.npz", 'dataset')
+    cl_define_with_key_check(cl, keys_list, "string", "gpu", "0")
+
+    kvae_model = "seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125310_kvae"
+    cl_define_with_key_check(cl, keys_list, "string", "kvae_model", kvae_model)
+    cl_define_with_key_check(cl, keys_list, "string", "dataset",    "/hdd_mount/logs/" + kvae_model + "/1step_prediction_error_data/pred_error_from_random.npz")
 
     # feature transformation 
-    cl.DEFINE_float('scale_inputs',  100,   'scale_inputs')
-    cl.DEFINE_float('bias',         0,   'bias') # 1e-7
+    cl_define_with_key_check(cl, keys_list, "float", "scale_inputs", 100)
+    cl_define_with_key_check(cl, keys_list, "float", "bias", 0)
  
     # network setting
-    cl.DEFINE_integer('dim_inputs',    15,   'dim_inputs')
-    cl.DEFINE_integer('dim_outputs',   1,   'dim_outputs')
-    cl.DEFINE_integer('N_ensemble',    5,   'N_ensemble')
-    cl.DEFINE_string('units',  '512, 512, 512', 'units')
-    # cl.DEFINE_string('units',  '200, 200, 200, 200', 'units')
+    cl_define_with_key_check(cl, keys_list, "integer", "dim_inputs", 15)
+    cl_define_with_key_check(cl, keys_list, "integer", "dim_outputs", 1)
+    cl_define_with_key_check(cl, keys_list, "integer", "N_ensemble", 5)
+    cl_define_with_key_check(cl, keys_list, "string",  "units", '512, 512, 512')
 
     # optimizer setting
-    cl.DEFINE_integer('epoch',        1000,   'epoch')
-    if 'batch_size' not in keys_list: 
-        cl.DEFINE_integer('batch_size',    64,    'batch_size')
-    if 'learning_rate' not in keys_list: 
-        cl.DEFINE_float('learning_rate', 0.001, 'learning_rate')
-
-    if 'reload_model' not in keys_list: 
-        cl.DEFINE_string('reload_model', '', 'Path to the model.ckpt file')
-    
-    if 'log_dir' not in keys_list: 
-        cl.DEFINE_string('log_dir',  'logs', 'Directory to save files in')
+    cl_define_with_key_check(cl, keys_list, "integer", "epoch", 500)
+    cl_define_with_key_check(cl, keys_list, "integer", "batch_size", 64)
+    cl_define_with_key_check(cl, keys_list, "float",   "learning_rate", 0.001)
+    cl_define_with_key_check(cl, keys_list, "string",  "reload_model", '')
+    cl_define_with_key_check(cl, keys_list, "string",  "log_dir", 'logs')
 
     print((3))
 

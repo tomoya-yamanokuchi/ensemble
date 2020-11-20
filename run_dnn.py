@@ -101,14 +101,17 @@ class RUN_DNN:
         # fig, ax = plt.subplots()
         # for i in range(N_train):
         #     ax.plot(y_train[i, :, 0])
-        # # ax.set_yscale('log')
+        # ax.set_yscale('log')
         # plt.show()
+
 
         # for i in range(dim_x): 
         #     self.plot_line(x_train[:, :, i])
+        #     # self.plot_hist(x_train[:, :, i].reshape(-1))
 
         y_train = np.expand_dims(np.sum(y_train, axis=-1), axis=-1)
         N_train, step, dim_y = y_train.shape
+
 
         print("=====================")
         print("   N_train : ", N_train) 
@@ -127,6 +130,14 @@ class RUN_DNN:
         x_max = np.max(np.max(x_train, axis=0), axis=0).reshape(1, 1, dim_x)
         x_min = np.min(np.min(x_train, axis=0), axis=0).reshape(1, 1, dim_x)
         x_train = (x_train - x_min) / (x_max - x_min)
+
+
+        # for i in range(dim_x): 
+        #     self.plot_hist(x_train[:, :, i].reshape(-1))
+
+
+        # for i in range(dim_x): 
+        #     self.plot_line(x_train[:, :, i])
 
 
         # for i in range(dim_x): 
@@ -160,9 +171,25 @@ class RUN_DNN:
         # y_train = y_train * config.scale_inputs
 
         y_train = np.log(y_train + config.bias)
+
+        # self.plot_hist(y_train.reshape(-1))
+        
+        # fig, ax = plt.subplots()
+        # for i in range(N_train):
+        #     ax.plot(y_train[i, :, 0])
+        # plt.show()
+
         y_log_mean = np.mean(y_train.reshape(-1))
         y_log_std  = np.std(y_train.reshape(-1))
         y_train = (y_train - y_log_mean) / y_log_std
+
+
+        self.plot_hist(y_train.reshape(-1))
+        
+        # fig, ax = plt.subplots()
+        # for i in range(N_train):
+        #     ax.plot(y_train[i, :, 0])
+        # plt.show()
 
         norm_info = {}
         norm_info["x_max"]      = x_max[0,0,:]

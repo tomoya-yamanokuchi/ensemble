@@ -12,7 +12,8 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.compat.v1 import ConfigProto
-from config_kvae import reload_config, get_image_config
+# from config_kvae import reload_config, get_image_config
+from config_seesaw import reload_config, get_image_config
 from dnn_kvae import DNNModel
 import normalize_dnn_data as norm_dnn_data
 
@@ -84,6 +85,7 @@ class RUN_PREDICT:
         path_conf = "./logs/N_ensemble5_20201110062703"
         path_conf = "./logs/N_ensemble5_20201110062835"
         path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_1direction_with_wall_wide_20201109144339_kvae20201112013225"
+        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125310_kvae_20201120085458"
 
         config = get_image_config()
         config.FLAGS.reload_model = path_conf + "/"
