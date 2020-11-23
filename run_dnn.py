@@ -98,11 +98,11 @@ class RUN_DNN:
 
         # self.plot_hist(y_train.reshape(-1))
 
-        # fig, ax = plt.subplots()
-        # for i in range(N_train):
-        #     ax.plot(y_train[i, :, 0])
+        fig, ax = plt.subplots()
+        for i in range(N_train):
+            ax.plot(y_train[i, :, 0])
         # ax.set_yscale('log')
-        # plt.show()
+        plt.show()
 
 
         # for i in range(dim_x): 
@@ -174,10 +174,10 @@ class RUN_DNN:
 
         # self.plot_hist(y_train.reshape(-1))
         
-        # fig, ax = plt.subplots()
-        # for i in range(N_train):
-        #     ax.plot(y_train[i, :, 0])
-        # plt.show()
+        fig, ax = plt.subplots()
+        for i in range(N_train):
+            ax.plot(y_train[i, :, 0])
+        plt.show()
 
         y_log_mean = np.mean(y_train.reshape(-1))
         y_log_std  = np.std(y_train.reshape(-1))
@@ -186,10 +186,10 @@ class RUN_DNN:
 
         self.plot_hist(y_train.reshape(-1))
         
-        # fig, ax = plt.subplots()
-        # for i in range(N_train):
-        #     ax.plot(y_train[i, :, 0])
-        # plt.show()
+        fig, ax = plt.subplots()
+        for i in range(N_train):
+            ax.plot(y_train[i, :, 0])
+        plt.show()
 
         norm_info = {}
         norm_info["x_max"]      = x_max[0,0,:]

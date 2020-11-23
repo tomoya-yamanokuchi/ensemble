@@ -40,7 +40,7 @@ def get_image_config():
 
     cl_define_with_key_check(cl, keys_list, "string", "gpu", "0")
 
-    kvae_model = "seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125310_kvae"
+    kvae_model = "seesaw_64x64_N5000_seq30_cem_random_mixed_20201120084813_kvae"
     cl_define_with_key_check(cl, keys_list, "string", "kvae_model", kvae_model)
     cl_define_with_key_check(cl, keys_list, "string", "dataset",    "/hdd_mount/logs/" + kvae_model + "/1step_prediction_error_data/pred_error_from_random.npz")
 

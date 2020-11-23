@@ -85,7 +85,8 @@ class RUN_PREDICT:
         path_conf = "./logs/N_ensemble5_20201110062703"
         path_conf = "./logs/N_ensemble5_20201110062835"
         path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_1direction_with_wall_wide_20201109144339_kvae20201112013225"
-        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125310_kvae_20201120085458"
+        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125310_kvae_20201120085458" # model10
+        # path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201120085415" # model11
 
         config = get_image_config()
         config.FLAGS.reload_model = path_conf + "/"
@@ -147,7 +148,7 @@ class RUN_PREDICT:
 
         y_train = norm_dnn_data.normalize_y(y_train, norm_info)
 
-        self.plot_DataFrame(np.expand_dims(x_train[:, :, 4], axis=-1), ylabel="u (control)", figsize=(6, 5))
+        # self.plot_DataFrame(np.expand_dims(x_train[:, :, 4], axis=-1), ylabel="u (control)", figsize=(6, 5))
 
         # fig, ax = plt.subplots()
         # for i in range(N_train):
@@ -161,7 +162,7 @@ class RUN_PREDICT:
         self.x_train = x_train
         self.y_train = y_train
 
-        self.predict_both(N_test=6)
+        self.predict_both(N_test=10)
         # self.predict_test1(mean_var=True)
         # self.predict_test1(mean_var=False)
         self.predict_test_train(mean_var=True)
@@ -182,7 +183,7 @@ class RUN_PREDICT:
         #     plt.show()
 
 
-        self.plot_3d(X1, X2, yy)
+        # self.plot_3d(X1, X2, yy)
 
 
 
