@@ -87,34 +87,36 @@ class RUN_PREDICT:
         path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_1direction_with_wall_wide_20201109144339_kvae20201112013225"
         path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125310_kvae_20201120085458" # model10
         # path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201120085415" # model11
-        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201120085415" # model12
+        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201120205316_kvae_20201127153852" # model10
 
         config = get_image_config()
-        config.FLAGS.ensemble_reload_model = path_conf + "/"
+        config.FLAGS.reload_model = path_conf + "/"
         config = reload_config(config.FLAGS)
-        os.environ['CUDA_VISIBLE_DEVICES'] = config.ensemble_gpu
+        os.environ['CUDA_VISIBLE_DEVICES'] = config.gpu
 
-        dnn = DNNModel(config)
-        
-        # session_config = ConfigProto()
-        # session_config.gpu_options.allow_growth = True
-        # with tf.Graph().as_default(), tf.Session(config=session_config) as sess:
-        
-        # with tf.variable_scope("ensemble"): 
-            
-        self.model = tf.keras.models.load_model( path_conf + "/model.h5", custom_objects={'swish': dnn.swish })
-            # saver = tf.train.Saver()
-            # sess = tf.keras.backend.get_session()
-            # hoge = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
-            # saver.save(sess, path_conf + '/model.ckpt')
 
-        N_ensemble = config.ensemble_N_ensemble
-        self.N_ensemble = N_ensemble
+
+        session_config = ConfigProto()
+        session_config.gpu_options.allow_growth = True
+        with tf.Session(config=session_config) as sess:
+            with tf.variable_scope('dnn'):
+
+
+                dnn = DNNModel(config)
+                # self.model = tf.keras.models.load_model( path_conf + "/model.h5", custom_objects={'swish': dnn.swish })
+
+                N_ensemble = config.N_ensemble
+                self.N_ensemble = N_ensemble
+
+                saver = tf.train.Saver()
+                saver.restore(sess, config.reload_model)
+
+
 
         # =================
         #   training
         # =================
-        npzfile  = np.load(config.ensemble_dataset)
+        npzfile  = np.load(config.dataset)
         y_train  = npzfile['pred_error'].astype(np.float32)
         x_train1 = npzfile['z'].astype(np.float32)
         x_train2 = npzfile['u'].astype(np.float32)

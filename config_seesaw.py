@@ -7,8 +7,8 @@ import json
 
 def reload_config(FLAGS):
     # If we are reloading a model, overwrite the flags
-    if FLAGS.reload_model is not '':
-        with open('%s/%s' % (os.path.dirname(FLAGS.reload_model), 'config.json')) as data_file:
+    if FLAGS.ensemble_reload_model is not '':
+        with open('%s/%s' % (os.path.dirname(FLAGS.ensemble_reload_model), 'config.json')) as data_file:
             config_dict = json.load(data_file)
 
         for key, value in list(config_dict.items()):
@@ -21,6 +21,7 @@ def reload_config(FLAGS):
 
 
 def cl_define_with_key_check(tf_app_flags, keys_list, define_type, define_name, default_item):
+    define_name = "ensemble_" + define_name
     if   define_type == "string" :  
         if define_name not in keys_list: 
             tf_app_flags.DEFINE_string(define_name, default_item, define_name)
@@ -55,7 +56,7 @@ def get_image_config():
     cl_define_with_key_check(cl, keys_list, "string",  "units", '512, 512, 512')
 
     # optimizer setting
-    cl_define_with_key_check(cl, keys_list, "integer", "epoch", 500)
+    cl_define_with_key_check(cl, keys_list, "integer", "epoch", 2)
     cl_define_with_key_check(cl, keys_list, "integer", "batch_size", 64)
     cl_define_with_key_check(cl, keys_list, "float",   "learning_rate", 0.001)
     cl_define_with_key_check(cl, keys_list, "string",  "reload_model", '')
