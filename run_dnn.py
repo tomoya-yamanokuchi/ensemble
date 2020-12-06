@@ -9,7 +9,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ptick 
 import tensorflow as tf
-from tensorflow.compat.v1 import ConfigProto
+# from tensorflow.compat.v1 import ConfigProto
 from mpl_toolkits.mplot3d import Axes3D
 import myloss
 
