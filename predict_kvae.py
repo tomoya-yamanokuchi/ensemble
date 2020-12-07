@@ -88,9 +88,10 @@ class RUN_PREDICT:
         path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125310_kvae_20201120085458" # model10
         # path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201120085415" # model11
         path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201120085415" # model12
-        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201207063955" # super-Loss
-        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201207064415"
-        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201207064519" # super-Loss 500epoch
+        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201207063955" # super-Loss 2epoch
+        # path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201207064415"
+        # path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201207064519" # super-Loss 500epoch
+        # path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201207153339" # mse 2 epoch
 
         FLAGS = get_image_config()
         FLAGS.ensemble_reload_model = path_conf + "/"

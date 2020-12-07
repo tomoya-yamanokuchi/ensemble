@@ -57,7 +57,7 @@ def get_image_config():
     cl_define_with_key_check(keys_list, "string",  "units", '512, 512, 512')
 
     # optimizer setting
-    cl_define_with_key_check(keys_list, "integer", "epoch", 100)
+    cl_define_with_key_check(keys_list, "integer", "epoch", 2)
     cl_define_with_key_check(keys_list, "integer", "batch_size", 64)
     cl_define_with_key_check(keys_list, "float",   "learning_rate", 0.001)
     cl_define_with_key_check(keys_list, "string",  "reload_model", '')

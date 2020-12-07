@@ -274,8 +274,8 @@ class RUN_DNN:
         # optimizer = tf.train.AdamOptimizer(learning_rate=config.ensemble_learning_rate)
         optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=config.ensemble_learning_rate)
 
-        model.compile(loss=myloss.smooth_L1_with_SuperLoss, optimizer=optimizer, metrics=['mse'])
-        # model.compile(loss='msle', optimizer=optimizer, metrics=['msle'])
+        # model.compile(loss=myloss.smooth_L1_with_SuperLoss, optimizer=optimizer, metrics=['mse'])
+        model.compile(loss='mse', optimizer=optimizer, metrics=['mse'])
 
 
         checkpoint_path = config.ensemble_log_dir + "/cp-{epoch:04d}.ckpt"
