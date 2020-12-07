@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import tensorflow_probability as tfp
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras import backend as K 
@@ -31,15 +32,15 @@ def smooth_L1_with_SuperLoss(x, y):
     tau   = 0.5
     beta  = (loss - tau) / alpha
     z     = 0.5*K.maximum(-2.0/K.exp(1.0), beta)
-    W     = z * K.exp(z)
-    sigma = K.exp(-W)
+    sigma = K.exp(-tfp.math.lambertw(z))
 
     loss = (loss - tau)*sigma + alpha*K.square(K.log(sigma))
     return loss
 
 
 def Lambert_W_function(z):
-    L = K.log(z)
-    M = K.log(L)
-    W = M + M/L + M*(M-1)/(2*K.square(L)) + M*(6 - 9*M + 2*K.square(M))/(6*(L**3))
+    # L = K.log(z)
+    # M = K.log(L)
+    # W = M + M/L + M*(M-1)/(2*K.square(L)) + M*(6 - 9*M + 2*K.square(M))/(6*(L**3))
+    W = tfp.math.lambertw(z)
     return W

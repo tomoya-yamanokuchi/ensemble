@@ -10,8 +10,14 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ptick 
 import tensorflow as tf
 # from tensorflow.compat.v1 import ConfigProto
-from mpl_toolkits.mplot3d import Axes3D
+# from mpl_toolkits.mplot3d import Axes3D
 import myloss
+
+
+# physical_devices = tf.config.list_physical_devices('GPU')
+# print("Num GPUs:", len(physical_devices))
+
+
 
 from dnn_kvae import DNNModel
 # from config_kvae import reload_config, get_image_config
@@ -70,8 +76,8 @@ class RUN_DNN:
 
 
     def run(self): 
-        config = get_image_config()
-        config = reload_config(config.FLAGS)
+        FLAGS = get_image_config()
+        config = reload_config(FLAGS)
         os.environ['CUDA_VISIBLE_DEVICES'] = config.ensemble_gpu
         # os.environ['CUDA_VISIBLE_DEVICES'] = "-1"
 
@@ -250,8 +256,8 @@ class RUN_DNN:
         y_train = y_train[index_train]
 
 
-        session_config = ConfigProto()
-        session_config.gpu_options.allow_growth = True
+        # session_config = ConfigProto()
+        # session_config.gpu_options.allow_growth = True
 
         dnn = DNNModel(config)
         # model = dnn.nn_constructor()
@@ -265,7 +271,8 @@ class RUN_DNN:
 
 
         # optimizer = tf.keras.optimizers.Adam(0.001)
-        optimizer = tf.train.AdamOptimizer(learning_rate=config.ensemble_learning_rate)
+        # optimizer = tf.train.AdamOptimizer(learning_rate=config.ensemble_learning_rate)
+        optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=config.ensemble_learning_rate)
 
         model.compile(loss=myloss.smooth_L1_with_SuperLoss, optimizer=optimizer, metrics=['mse'])
         # model.compile(loss='msle', optimizer=optimizer, metrics=['msle'])
@@ -278,35 +285,26 @@ class RUN_DNN:
                                                         verbose=0,
                                                         period=config.ensemble_epoch)
 
-        mycb = MYCallBack(config.ensemble_log_dir)
-
-        session_config = ConfigProto()
-        session_config.gpu_options.allow_growth = True
-        with tf.Session(config=session_config) as sess:
-
-            # a = np.array([0]).astype(np.float32)
-            # b = np.linspace(-5, 5, 100).astype(np.float32)
-            # e = myloss.smooth_L1(a, b)
-            # plt.plot(sess.run(e))
-            # plt.show()
-
-            a = np.linspace(-1, 2, 100)
-            e = myloss.Lambert_W_function(a)
-            plt.plot(sess.run(e))
-            plt.show()
+        # mycb = MYCallBack(config.ensemble_log_dir)
 
 
-            saver = tf.train.Saver()
-            model.fit(x_train.reshape(-1, dim_x), [y_train[:,:,0].reshape(-1)]*config.ensemble_N_ensemble, 
-                                epochs=config.ensemble_epoch,
-                                batch_size=config.ensemble_batch_size,  
-                                validation_data=(x_valid.reshape(-1, dim_x), [y_valid[:,:,0].reshape(-1)]*config.ensemble_N_ensemble), 
-                                # callbacks=[cp_callback, mycb], 
-                                callbacks=[mycb], 
-                                use_multiprocessing=True)
+        a = np.linspace(-1/np.exp(1), 1, 100)
+        e = myloss.Lambert_W_function(a)
+        plt.plot(a, e)
+        plt.show()
 
-            # model.save(checkpoint_dir + "/model.h5")
-            saver.save(sess, checkpoint_dir + '/model.ckpt')
+
+        # saver = tf.train.Saver()
+        model.fit(x_train.reshape(-1, dim_x), [y_train[:,:,0].reshape(-1)]*config.ensemble_N_ensemble, 
+                            epochs=config.ensemble_epoch,
+                            batch_size=config.ensemble_batch_size,  
+                            validation_data=(x_valid.reshape(-1, dim_x), [y_valid[:,:,0].reshape(-1)]*config.ensemble_N_ensemble), 
+                            # callbacks=[cp_callback, mycb], 
+                            callbacks=[cp_callback], 
+                            use_multiprocessing=True)
+
+        model.save(checkpoint_dir + "/model.h5")
+        # saver.save(sess, checkpoint_dir + '/model.ckpt')
 
         print("end")
 

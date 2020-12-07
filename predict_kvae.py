@@ -88,10 +88,13 @@ class RUN_PREDICT:
         path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125310_kvae_20201120085458" # model10
         # path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201120085415" # model11
         path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201120085415" # model12
+        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201207063955" # super-Loss
+        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201207064415"
+        path_conf = "./logs/ensemble_M5_seesaw_64x64_N5000_seq30_cem_random_mixed_20201119125346_kvae_20201207064519" # super-Loss 500epoch
 
-        config = get_image_config()
-        config.FLAGS.ensemble_reload_model = path_conf + "/"
-        config = reload_config(config.FLAGS)
+        FLAGS = get_image_config()
+        FLAGS.ensemble_reload_model = path_conf + "/"
+        config = reload_config(FLAGS)
         os.environ['CUDA_VISIBLE_DEVICES'] = config.ensemble_gpu
 
         dnn = DNNModel(config)
