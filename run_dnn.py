@@ -9,7 +9,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ptick 
 import tensorflow as tf
-from tensorflow.compat.v1 import ConfigProto
+import hydra
+from omegaconf import DictConfig
 from mpl_toolkits.mplot3d import Axes3D
 import myloss
 
@@ -69,26 +70,25 @@ class RUN_DNN:
         plt.show()
 
 
-    def run(self): 
-        config = get_image_config()
-        config = reload_config(config.FLAGS)
-        os.environ['CUDA_VISIBLE_DEVICES'] = config.ensemble_gpu
-        # os.environ['CUDA_VISIBLE_DEVICES'] = "-1"
+
+    
+    def run(self, config):        
+        os.environ['CUDA_VISIBLE_DEVICES'] = str(config.gpu)
 
         # Save hyperparameters
-        config.ensemble_log_dir = "logs"
-        run_name = "ensemble_M{}_".format(config.ensemble_N_ensemble) + config.ensemble_kvae_model + "_" + time.strftime('%Y%m%d%H%M%S', time.localtime())
-        config.ensemble_log_dir = os.path.join(config.ensemble_log_dir, run_name)
-        if not os.path.isdir(config.ensemble_log_dir):
-            os.makedirs(config.ensemble_log_dir)
-        with open(config.ensemble_log_dir + '/config.json', 'w') as f:
+        config.log_dir = "logs"
+        run_name = "M{}_".format(config.N_ensemble) + config.kvae_model + "_" + time.strftime('%Y%m%d%H%M%S', time.localtime())
+        config.log_dir = os.path.join(config.log_dir, run_name)
+        if not os.path.isdir(config.log_dir):
+            os.makedirs(config.log_dir)
+        with open(config.log_dir + '/config.json', 'w') as f:
             json.dump(config.flag_values_dict(), f, ensure_ascii=False, indent=4, separators=(',', ': '))
 
 
         # =================
         #     training
         # =================
-        npzfile  = np.load(config.ensemble_dataset)
+        npzfile  = np.load(config.dataset)
         y_train  = npzfile['pred_error'].astype(np.float32)
         x_train1 = npzfile['z'].astype(np.float32)
         x_train2 = npzfile['u'].astype(np.float32)
@@ -169,9 +169,9 @@ class RUN_DNN:
         # y_max = np.max(np.max(y_train, axis=0), axis=0).reshape(1, 1, dim_y)
         # y_min = np.min(np.min(y_train, axis=0), axis=0).reshape(1, 1, dim_y)
         # y_train = (y_train - y_min) / (y_max - y_min)
-        # y_train = y_train * config.ensemble_scale_inputs
+        # y_train = y_train * config.scale_inputs
 
-        y_train = np.log(y_train + config.ensemble_bias)
+        y_train = np.log(y_train + config.bias)
 
         # self.plot_hist(y_train.reshape(-1))
         
@@ -195,10 +195,10 @@ class RUN_DNN:
         norm_info = {}
         norm_info["x_max"]      = x_max[0,0,:]
         norm_info["x_min"]      = x_min[0,0,:]
-        norm_info["bias"]       = config.ensemble_bias
+        norm_info["bias"]       = config.bias
         norm_info["y_log_mean"] = y_log_mean
         norm_info["y_log_std"]  = y_log_std
-        with open(config.ensemble_log_dir + "/norm_info.pickle", "wb") as f: 
+        with open(config.log_dir + "/norm_info.pickle", "wb") as f: 
             pickle.dump(norm_info, f)
 
 
@@ -256,7 +256,7 @@ class RUN_DNN:
         dnn = DNNModel(config)
         # model = dnn.nn_constructor()
 
-        model = dnn.nn_ensemble(N_ensemble=config.ensemble_N_ensemble)
+        model = dnn.nn_ensemble(N_ensemble=config.N_ensemble)
         model.summary()
 
         # example_batch = x_test
@@ -265,20 +265,20 @@ class RUN_DNN:
 
 
         # optimizer = tf.keras.optimizers.Adam(0.001)
-        optimizer = tf.train.AdamOptimizer(learning_rate=config.ensemble_learning_rate)
+        optimizer = tf.train.AdamOptimizer(learning_rate=config.learning_rate)
 
         model.compile(loss=myloss.smooth_L1_with_SuperLoss, optimizer=optimizer, metrics=['mse'])
         # model.compile(loss='msle', optimizer=optimizer, metrics=['msle'])
 
 
-        checkpoint_path = config.ensemble_log_dir + "/cp-{epoch:04d}.ckpt"
+        checkpoint_path = config.log_dir + "/cp-{epoch:04d}.ckpt"
         checkpoint_dir  = os.path.dirname(checkpoint_path)
         cp_callback     = tf.keras.callbacks.ModelCheckpoint(checkpoint_path, 
                                                         save_weights_only=True,
                                                         verbose=0,
-                                                        period=config.ensemble_epoch)
+                                                        period=config.epoch)
 
-        mycb = MYCallBack(config.ensemble_log_dir)
+        mycb = MYCallBack(config.log_dir)
 
         session_config = ConfigProto()
         session_config.gpu_options.allow_growth = True
@@ -297,10 +297,10 @@ class RUN_DNN:
 
 
             saver = tf.train.Saver()
-            model.fit(x_train.reshape(-1, dim_x), [y_train[:,:,0].reshape(-1)]*config.ensemble_N_ensemble, 
-                                epochs=config.ensemble_epoch,
-                                batch_size=config.ensemble_batch_size,  
-                                validation_data=(x_valid.reshape(-1, dim_x), [y_valid[:,:,0].reshape(-1)]*config.ensemble_N_ensemble), 
+            model.fit(x_train.reshape(-1, dim_x), [y_train[:,:,0].reshape(-1)]*config.N_ensemble, 
+                                epochs=config.epoch,
+                                batch_size=config.batch_size,  
+                                validation_data=(x_valid.reshape(-1, dim_x), [y_valid[:,:,0].reshape(-1)]*config.N_ensemble), 
                                 # callbacks=[cp_callback, mycb], 
                                 callbacks=[mycb], 
                                 use_multiprocessing=True)
@@ -313,6 +313,23 @@ class RUN_DNN:
 
 
 if __name__ == "__main__":
+    import hydra
+    from attrdict import AttrDict
+    from omegaconf import DictConfig, OmegaConf
+    from hydra.core.config_store import ConfigStore
+    from hydra.experimental import (
+        initialize,
+        initialize_config_module,
+        initialize_config_dir,
+        compose,
+    )
     
-    run = RUN_DNN()
-    run.run()
+    @hydra.main(config_path="conf/config_ICRA2022.yaml")
+    def get_config(cfg: DictConfig) -> None:
+        
+        run = RUN_DNN()
+        run.run(cfg)
+    
+    get_config()
+    
+    

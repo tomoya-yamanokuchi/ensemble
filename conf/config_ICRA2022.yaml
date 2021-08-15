@@ -1,0 +1,20 @@
+gpu           : 0
+kvae_model    : "dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae"
+dataset       : "/hdd_mount/logs/dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae/1step_prediction_error_data/pred_error_from_canonical.npz"
+
+# feature transformation 
+scale_inputs  : 100
+bias          : 0
+
+# network setting
+dim_inputs    : 15
+dim_outputs   : 1
+N_ensemble    : 5
+units         : '512, 512, 512'
+
+# optimizer setting
+epoch         : 2
+batch_size    : 64
+learning_rate : 0.001
+reload_model  : ''
+log_dir       : 'logs'
