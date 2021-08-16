@@ -10,9 +10,9 @@ from tensorflow.python.keras.layers import Lambda
 class DNNModel: 
     def __init__(self, config):
         self.config = config
-        self.units = [int(f) for f in config.ensemble_units.split(',')]
-        self.dim_inputs  = config.ensemble_dim_inputs
-        self.dim_outputs = config.ensemble_dim_outputs
+        self.units = [int(f) for f in config.units.split(',')]
+        self.dim_inputs  = config.dim_inputs
+        self.dim_outputs = config.dim_outputs
         print("init !")
 
     def swish(self, x):
@@ -49,6 +49,6 @@ class DNNModel:
 
         # outputs = layers.average(y)
         outputs = y
-        ensemble_model = keras.Model(inputs=inputs, outputs=outputs)
+        model = keras.Model(inputs=inputs, outputs=outputs)
 
-        return ensemble_model
+        return model
