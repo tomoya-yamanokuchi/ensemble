@@ -18,11 +18,11 @@ class Repository:
         y_train  = npzfile['z_true'].astype(np.float32)
         x_train1 = npzfile['z'].astype(np.float32)
         x_train2 = npzfile['u'].astype(np.float32)
-        x_train3 = npzfile['alpha'].astype(np.float32)
-        x_train  = np.concatenate([x_train1, x_train2, x_train3], axis=-1)
-        # x_train  = np.concatenate([x_train1, x_train2], axis=-1)
-        return x_train[:1], y_train[:1]
-        # return x_train, y_train
+        # x_train3 = npzfile['alpha'].astype(np.float32)
+        # x_train  = np.concatenate([x_train1, x_train2, x_train3], axis=-1)
+        x_train  = np.concatenate([x_train1, x_train2], axis=-1)
+        # return x_train[:1], y_train[:1]
+        return x_train, y_train
     
     
     def save_norm_data(self, path, x_min, x_max, y_min, y_max):

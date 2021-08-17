@@ -25,6 +25,14 @@ def normalize_z_score(x, x_log_mean=None, x_log_std=None):
     return x_normalized, x_log_mean, x_log_std
 
 
+def denormalize_z_score(x, x_log_mean=None, x_log_std=None):
+    assert len(x.shape) == 3 
+    dim = x.shape[-1]        
+    x = x * x_log_std + x_log_mean
+    return x
+
+
+
 def denormalize(x_normalized, x_min, x_max): 
     assert len(x_normalized.shape) == 3 
     assert len(x_min.shape) == 3 

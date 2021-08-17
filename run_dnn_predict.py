@@ -105,9 +105,9 @@ class RUN_PREDICT:
         x_train, y_train     = repository.load_dataset(config.dataset)
         
         # --------------------
-        x_aux = self.add_noise(x_train, dim_list=[6, 7, 8, 9, 10,11,12,13], std=1, num=20)
-        x_train = np.concatenate((x_train, x_aux), axis=0)
-        y_train = np.tile(y_train, (x_train.shape[0], 1, 1))
+        # x_aux = self.add_noise(x_train, dim_list=[6, 7, 8, 9, 10,11,12,13], std=1, num=20)
+        # x_train = np.concatenate((x_train, x_aux), axis=0)
+        # y_train = np.tile(y_train, (x_train.shape[0], 1, 1))
         # --------------------
         
         
@@ -124,8 +124,8 @@ class RUN_PREDICT:
         # y_min, y_max  = repository.load_norm_data(self.config.load_dir + "/norm_data.npz")
         # y_train       = np.log(y_train)
         
-        y_log_mean, y_log_std = repository.load_norm_data_z_score(self.config.load_dir + "/norm_data.npz")
-        y_train, _, _ = norm.normalize_z_score(y_train, y_log_mean, y_log_std)
+        # y_log_mean, y_log_std = repository.load_norm_data_z_score(self.config.load_dir + "/norm_data.npz")
+        # y_train, _, _ = norm.normalize_z_score(y_train, y_log_mean, y_log_std)
         
         # plothandler.plot_all_sequence(y_train[:, :, :])
 
@@ -331,6 +331,7 @@ if __name__ == "__main__":
     path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210816204000"
     
     path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210816221551"
+    path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210817002742"
     
     path = "/hdd_mount/ensemble/logs/" + path
     config              = OmegaConf.load(path + "/config.yaml")

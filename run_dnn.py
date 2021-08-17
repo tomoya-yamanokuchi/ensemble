@@ -43,17 +43,18 @@ class RUN_DNN:
         # self.plot_all_sequence(x_train[:, :, -8:])
         # self.plot_all_sequence(y_train[:, :, :])
 
+    
         cout.console_output(N_train, step, dim_x, dim_y)
 
         # -------------- normalize and convert -------------------
         # x_train, x_min , x_max = norm.normalize(x_train)
         # y_train                = np.log(y_train)
         # y_train, y_min , y_max = norm.normalize(y_train)
-        y_train, y_log_mean, y_log_std = norm.normalize_z_score(y_train)
+        # y_train, y_log_mean, y_log_std = norm.normalize_z_score(y_train)
         # repository.save_norm_data(config.log_dir + "/norm_data.npz",  x_min, x_max, y_min, y_max)
-        repository.save_norm_data_z_score(config.log_dir + "/norm_data.npz",  y_log_mean, y_log_std)
+        # repository.save_norm_data_z_score(config.log_dir + "/norm_data.npz",  y_log_mean, y_log_std)
         
-        # plothandler.plot_all_sequence(x_train[:, :, :])
+        plothandler.plot_all_sequence(x_train[:, :, :])
         plothandler.plot_all_sequence(y_train[:, :, :])
 
         # y_restore = np.exp(norm.denormalize(y_train, y_min, y_max))

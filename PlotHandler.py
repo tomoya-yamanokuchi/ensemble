@@ -96,7 +96,7 @@ def plot_inputs_scatter(x, y, x_colomuns):
 def predict_both(x_train, y_train, x_test, y_test, y_predict, N_test): 
     sequence, step, dim_y, ensemble_num = y_predict.shape
 
-    dy = 2
+    dy = -1
     
     fig, ax = plt.subplots(2, N_test, figsize=(9, 6))
     for n in range(N_test):
