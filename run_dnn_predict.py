@@ -116,7 +116,7 @@ class RUN_PREDICT:
         y_train_origin       = copy.deepcopy(y_train)
         
 
-        plothandler.plot_all_sequence(x_train[:, :, :])
+        # plothandler.plot_all_sequence(x_train[:, :, :])
         # self.plot_all_sequence(y_train[:, :, :])
 
         cout.console_output(N_train, step, dim_x, dim_y)
@@ -124,8 +124,8 @@ class RUN_PREDICT:
         # y_min, y_max  = repository.load_norm_data(self.config.load_dir + "/norm_data.npz")
         # y_train       = np.log(y_train)
         
-        # y_log_mean, y_log_std = repository.load_norm_data_z_score(self.config.load_dir + "/norm_data.npz")
-        # y_train, _, _ = norm.normalize_z_score(y_train, y_log_mean, y_log_std)
+        y_log_mean, y_log_std = repository.load_norm_data_z_score(self.config.load_dir + "/norm_data.npz")
+        y_train, _, _ = norm.normalize_z_score(y_train, y_log_mean, y_log_std)
         
         # plothandler.plot_all_sequence(y_train[:, :, :])
 
@@ -331,7 +331,8 @@ if __name__ == "__main__":
     path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210816204000"
     
     path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210816221551"
-    path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210817002742"
+    path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210817143010"
+    
     
     path = "/hdd_mount/ensemble/logs/" + path
     config              = OmegaConf.load(path + "/config.yaml")
