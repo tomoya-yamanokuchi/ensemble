@@ -1,5 +1,5 @@
 {
-    "python.pythonPath" : "/home/tomoya-y/.venv_python3.6/bin/python",
+    "python.pythonPath" : "/home/tomoya-y/.venv_python3.7/bin/python",
     "editor.fontFamily" : "Ubuntu Mono",
     "editor.fontSize"   : 16,
     "editor.tabSize"    : 4,

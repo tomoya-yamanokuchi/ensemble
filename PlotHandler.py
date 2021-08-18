@@ -14,16 +14,16 @@ import pandas as pd
 
 
 
-def plot_line(x): 
+def plot_line(x):
     seq, step = x.shape
     fig, ax = plt.subplots()
-    for s in range(seq): 
+    for s in range(seq):
         ax.plot(x[s, :])
     plt.show()
     print()
 
 
-def plot_hist(x): 
+def plot_hist(x):
     fig, ax = plt.subplots()
     plt.hist(x)
     print("======================")
@@ -40,21 +40,21 @@ def plot_all_sequence(x):
     sequence, step, dim = x.shape
     fig, ax = plt.subplots(dim, 1)
     for d in range(dim):
-        if dim > 1: 
+        if dim > 1:
             ax[d].plot(x[:, :, d].transpose())
-        else: 
+        else:
             ax.plot(x[:, :, d].transpose())
     plt.show()
-    
-    
 
-def plot_inputs_scatter(x, y, x_colomuns): 
+
+
+def plot_inputs_scatter(x, y, x_colomuns):
     # cm = plt.cm.get_cmap('RdYlBu')
 
-    # fig = plt.figure()        
+    # fig = plt.figure()
     # ax = fig.add_subplot(1, 1, 1)
-    
-    # for i in range(x.shape[0]): 
+
+    # for i in range(x.shape[0]):
     #     print(" - {0}/{1}".format(i, x.shape[0]))
     #     mappable = ax.scatter(x[i, :, 0], x[i, :, 1], c=y[i, :, 0], vmin=0, vmax=20, s=10, cmap=cm, lw=0)
 
@@ -69,22 +69,22 @@ def plot_inputs_scatter(x, y, x_colomuns):
     # plt.hist2d(data["state"], data["control"], bins=(100, 100), cmap=cm.jet)
 
     plt.show()
-    
 
 
-# def plot_data_info(self, x_train, y_train): 
+
+# def plot_data_info(self, x_train, y_train):
 #     self.plot_hist(y_train.reshape(-1))
 #     self.plot_hist(x_train[:, :, -8:].reshape(-1))
 #     self.plot_hist(x_train[:, :, 6:-8].reshape(-1))
 #     self.plot_all_sequence(np.log(y_train))
 
-#     for i in range(dim_x): 
+#     for i in range(dim_x):
 #         self.plot_line(x_train[:, :, i])
 #         # self.plot_hist(x_train[:, :, i].reshape(-1))
 
 
 #     self.plot_hist(y_train.reshape(-1))
-    
+
 #     fig, ax = plt.subplots()
 #     for i in range(N_train):
 #         ax.plot(y_train[i, :, 0])
@@ -93,11 +93,11 @@ def plot_inputs_scatter(x, y, x_colomuns):
 
 
 
-def predict_both(x_train, y_train, x_test, y_test, y_predict, N_test): 
+def predict_both(x_train, y_train, x_test, y_test, y_predict, N_test):
     sequence, step, dim_y, ensemble_num = y_predict.shape
 
-    dy = -1
-    
+    dy = 0
+
     fig, ax = plt.subplots(2, N_test, figsize=(9, 6))
     for n in range(N_test):
         for m in range(ensemble_num):
@@ -115,7 +115,7 @@ def predict_both(x_train, y_train, x_test, y_test, y_predict, N_test):
         ax[1, n].plot(y_test[n, :, dy], color="k", label="Ground Truth")
 
         ax[1, n].set_xlabel("Step", fontsize=18)
-        if n == 0: 
+        if n == 0:
             ax[0, n].set_ylabel(r"$ e_{t_+1} $", fontsize=18)
             ax[1, n].set_ylabel(r"$ e_{t_+1} $", fontsize=18)
 

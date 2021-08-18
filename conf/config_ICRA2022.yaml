@@ -1,6 +1,6 @@
 gpu           : 0
-kvae_model    : "dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae"
-dataset       : "/hdd_mount/logs/dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae/models/Epochs_9999/dataset.npz"
+kvae_model    : "dclaw_64x64_N3020_seq20_dim_a8_Epoch5000_seed1_SCREW_VISUAL_RANDOMIZE_20210817205912_random_nonfix_to_canonical_kvae"
+dataset       : "/hdd_mount/logs/dclaw_64x64_N3020_seq20_dim_a8_Epoch5000_seed1_SCREW_VISUAL_RANDOMIZE_20210817205912_random_nonfix_to_canonical_kvae/models/Epochs_1999/dataset.npz"
 
 # network setting
 dim_inputs    : 10

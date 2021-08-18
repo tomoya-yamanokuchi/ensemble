@@ -26,7 +26,7 @@ import ConsoleOutput as cout
 import PlotHandler as plothandler
 
 class RUN_PREDICT:
-    def plot_hist(self, x): 
+    def plot_hist(self, x):
         fig, ax = plt.subplots()
         plt.hist(x)
         print("======================")
@@ -38,10 +38,10 @@ class RUN_PREDICT:
         plt.show()
 
 
-    def plot_line(self, x): 
+    def plot_line(self, x):
         seq, step = x.shape
         fig, ax = plt.subplots()
-        for s in range(seq): 
+        for s in range(seq):
             ax.plot(x[s, :])
         plt.show()
         print()
@@ -53,12 +53,12 @@ class RUN_PREDICT:
         sns.set()
 
         fig, ax = plt.subplots(nrows=1, ncols=dim_x, figsize=figsize)
-        for d in range(dim_x): 
+        for d in range(dim_x):
             df = pd.DataFrame(x[:,:,d], columns=range(N))
             df.cumsum()
-            if dim_x == 1: 
+            if dim_x == 1:
                 df.plot(ax=ax, legend=False)
-            else: 
+            else:
                 df.plot(ax=ax[d], legend=False)
 
         ax.set_xlim([0, step-1])
@@ -66,12 +66,12 @@ class RUN_PREDICT:
         ax.set_xlabel("step")
         plt.show()
 
-        # for d in range(dim_x): 
+        # for d in range(dim_x):
         #     df = pd.DataFrame(x[:,:,d], columns=range(N))
         #     df.cumsum().plot()
         #     plt.show()
 
-    
+
     def plot_3d(self, x, y, z):
         self.fig = plt.figure()
         self.axis = self.fig.add_subplot(111, projection='3d')
@@ -84,49 +84,49 @@ class RUN_PREDICT:
         plt.show()
 
 
-    def add_noise(self, x, dim_list, std, num): 
+    def add_noise(self, x, dim_list, std, num):
         assert len(x.shape) == 3
         sequence, step, dim = x.shape
         xx = np.zeros([num, step, dim])
-        for ind, d in enumerate(range(dim)): 
-            if d in dim_list: 
+        for ind, d in enumerate(range(dim)):
+            if d in dim_list:
                 xx[:, :, d] = x[:, :, d] + np.random.randn(*xx[:, :, d].shape)*std
-            else: 
+            else:
                 xx[:, :, d] = x[:, :, d]
         return xx
 
 
 
-    def run(self, config): 
+    def run(self, config):
         self.config = config
         os.environ['CUDA_VISIBLE_DEVICES'] = str(config.gpu)
 
         repository = Repository()
         x_train, y_train     = repository.load_dataset(config.dataset)
-        
+
         # --------------------
         # x_aux = self.add_noise(x_train, dim_list=[6, 7, 8, 9, 10,11,12,13], std=1, num=20)
         # x_train = np.concatenate((x_train, x_aux), axis=0)
         # y_train = np.tile(y_train, (x_train.shape[0], 1, 1))
         # --------------------
-        
-        
+
+
         N_train, step, dim_x = x_train.shape
         dim_y                = y_train.shape[-1]
         y_train_origin       = copy.deepcopy(y_train)
-        
+
 
         # plothandler.plot_all_sequence(x_train[:, :, :])
         # self.plot_all_sequence(y_train[:, :, :])
 
         cout.console_output(N_train, step, dim_x, dim_y)
-        
+
         # y_min, y_max  = repository.load_norm_data(self.config.load_dir + "/norm_data.npz")
         # y_train       = np.log(y_train)
-        
+
         y_log_mean, y_log_std = repository.load_norm_data_z_score(self.config.load_dir + "/norm_data.npz")
         y_train, _, _ = norm.normalize_z_score(y_train, y_log_mean, y_log_std)
-        
+
         # plothandler.plot_all_sequence(y_train[:, :, :])
 
         dnn = DNNModel(config)
@@ -152,14 +152,14 @@ class RUN_PREDICT:
         self.dim_y   = dim_y
         self.x_train = x_train
         self.y_train = y_train
-        
+
 
         y_predict = self.dnn_model.predict(x_train.reshape(-1, self.dim_x))
         y_predict = np.stack(y_predict, axis=-1).reshape(N_train, self.step, self.dim_y, config.N_ensemble)
 
         plothandler.predict_both(x_train, y_train, x_train, y_train, y_predict, N_test=20)
-        
-        
+
+
         # self.predict_test1(mean_var=True)
         # self.predict_test1(mean_var=False)
         self.predict_test_train(mean_var=True)
@@ -184,7 +184,7 @@ class RUN_PREDICT:
 
 
 
-    def predict_test1(self, mean_var=False): 
+    def predict_test1(self, mean_var=False):
         N_ensemble = self.config.N_ensemble
         N_test = 15
 
@@ -198,10 +198,10 @@ class RUN_PREDICT:
         for n in range(N_test):
             fig, ax = plt.subplots(figsize=(3, 3))
 
-            if mean_var is False: 
+            if mean_var is False:
                 for m in range(N_ensemble):
                     ax.plot(y_predict[n, :, 0, m], color="mediumvioletred")
-            else: 
+            else:
                 mean  = np.mean(y_predict[n, :, 0, :], axis=-1)
                 std   = np.std( y_predict[n, :, 0, :], axis=-1)
                 lower = mean - 2.0*std
@@ -218,7 +218,7 @@ class RUN_PREDICT:
 
 
 
-    def predict_test2(self): 
+    def predict_test2(self):
         # self.x_train.reshape(-1, self.dim_x)[:, 0]
 
         ind_alpha  = -100
@@ -254,8 +254,8 @@ class RUN_PREDICT:
 
         # yy = np.minimum(1.2,  y_predict)
         # yy = np.maximum(0.5, y_predict)
-        # for m in range(N_ensemble): 
-        for m in range(1): 
+        # for m in range(N_ensemble):
+        for m in range(1):
             ax3d.plot_surface(X1, X2, y_predict[:, 0, m].reshape(N_mesh, N_mesh),cmap='plasma')
         # ax3d.plot(zu_add[:, 0], zu_add[:, 1], np.linspace(-1.2, 1.2, N_zu),  markersize=30, color="r")
         ax3d.set_title('Surface Plot in Matplotlib')
@@ -288,27 +288,27 @@ class RUN_PREDICT:
 
 
 
-        y_true = y_test.reshape(-1, self.dim_y) 
-        
+        y_true = y_test.reshape(-1, self.dim_y)
+
         y_mean    = norm_dnn_data.denormalize_y(y_mean,    self.norm_info)
         y_true    = norm_dnn_data.denormalize_y(y_true,    self.norm_info)
         y_predict = norm_dnn_data.denormalize_y(y_predict, self.norm_info)
-        
+
         y_min = np.concatenate([y_mean, y_true], axis=-1).reshape(-1).min()
         y_max = np.concatenate([y_mean, y_true], axis=-1).reshape(-1).max()
 
         error = (y_true - y_mean)**2
 
-        if mean_var is True: 
+        if mean_var is True:
             fig, ax = plt.subplots()
             ax.plot(y_true, y_mean,'b.', markersize=3)
             ax.plot([y_min, y_max],[y_min, y_max], color="k")
             ax.set_xlabel('y_true')
             ax.set_ylabel('y_predict')
             plt.show()
-        else: 
+        else:
             fig, ax = plt.subplots()
-            for i in range(N_ensemble): 
+            for i in range(N_ensemble):
                 ax.plot(y_true, y_predict[:, 0, i], linestyle="None", marker=".", color=cm.hsv(i/N_ensemble), markersize=3)
             ax.plot([y_min, y_max],[y_min, y_max], color="k")
             ax.set_xlabel('y_true')
@@ -329,11 +329,11 @@ if __name__ == "__main__":
     path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210816203544"
     path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210816203825"
     path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210816204000"
-    
+
     path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210816221551"
-    path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210817143010"
-    
-    
+    path = "M5_dclaw_64x64_N3020_seq20_dim_a8_Epoch5000_seed1_SCREW_VISUAL_RANDOMIZE_20210817205912_random_nonfix_to_canonical_kvae_20210818164902"
+
+
     path = "/hdd_mount/ensemble/logs/" + path
     config              = OmegaConf.load(path + "/config.yaml")
     config.load_dir     = path
