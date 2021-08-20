@@ -331,7 +331,7 @@ if __name__ == "__main__":
     path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210816204000"
 
     path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210816221551"
-    path = "M5_dclaw_64x64_N3020_seq20_dim_a8_Epoch5000_seed1_SCREW_VISUAL_RANDOMIZE_20210817205912_random_nonfix_to_canonical_kvae_20210818164902"
+    path = "M5_dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae_20210820165724"
 
 
     path = "/hdd_mount/ensemble/logs/" + path
