@@ -157,7 +157,7 @@ class RUN_PREDICT:
         y_predict = self.dnn_model.predict(x_train.reshape(-1, self.dim_x))
         y_predict = np.stack(y_predict, axis=-1).reshape(N_train, self.step, self.dim_y, config.N_ensemble)
 
-        plothandler.predict_both(x_train, y_train, x_train, y_train, y_predict, N_test=5)
+        plothandler.predict_both(x_train, y_train, x_train, y_train, y_predict, N_test=10)
 
 
         # self.predict_test1(mean_var=True)
@@ -335,6 +335,9 @@ if __name__ == "__main__":
 
 
     path = "M5_dclaw_64x64_N250_seq20_dim_a8_Epoch10000_seed1_SCREW_DYNAMICS_RANDOMIZE_20210819235205_canonical_to_canonical_kvae_20210820160825"
+
+    path = "M5_dclaw_64x64_N2001_seq25_dim_a8_Epoch5000_seed0_SCREW_task_space_3DoF_20210902190800_random_nonfix_to_canonical_kvae_20210903114749"
+    path = "M5_dclaw_64x64_N2001_seq25_dim_a8_Epoch5000_seed0_SCREW_task_space_3DoF_20210902190800_random_nonfix_to_canonical_kvae_20210903125324"
 
 
     path = "/hdd_mount/ensemble/logs/" + path
