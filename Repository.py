@@ -7,7 +7,8 @@ class Repository:
     def save_config(self, config: DictConfig):
         assert type(config) == DictConfig, "expected: DictConfig, input: {}".format(type(config))
         config.log_dir = "/hdd_mount/ensemble/logs"
-        run_name       = "M{}_".format(config.N_ensemble) + config.kvae_model + "_" + time.strftime('%Y%m%d%H%M%S', time.localtime())
+        # run_name       = "M{}_".format(config.N_ensemble) + config.kvae_model + "_" + time.strftime('%Y%m%d%H%M%S', time.localtime())
+        run_name       = "M{}".format(config.N_ensemble) + "_" + time.strftime('%Y%m%d%H%M%S', time.localtime())
         config.log_dir = os.path.join(config.log_dir, run_name)
         os.makedirs(config.log_dir, exist_ok=True)
         OmegaConf.save(config, config.log_dir + "/config.yaml")
@@ -48,6 +49,10 @@ class Repository:
         y_train  = z[:, 1:]
         x_train1 = z[:, :-1]
         x_train2 = u[:, :-1]
+
+        # y_train  = z[:1, 1:]
+        # x_train1 = z[:1, :-1]
+        # x_train2 = u[:1, :-1]
 
         x_train  = np.concatenate([x_train1, x_train2], axis=-1)
         return x_train, y_train

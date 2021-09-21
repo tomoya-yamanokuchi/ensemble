@@ -339,7 +339,11 @@ if __name__ == "__main__":
     path = "M5_dclaw_64x64_N2001_seq25_dim_a8_Epoch5000_seed0_SCREW_task_space_3DoF_20210902190800_random_nonfix_to_canonical_kvae_20210903114749"
     path = "M5_dclaw_64x64_N2001_seq25_dim_a8_Epoch5000_seed0_SCREW_task_space_3DoF_20210902190800_random_nonfix_to_canonical_kvae_20210903125324"
 
+    path = "M5_20210921153952"
+    path = "M5_20210921154559"
 
+
+    # ---------------------------------------------------------
     path = "/hdd_mount/ensemble/logs/" + path
     config              = OmegaConf.load(path + "/config.yaml")
     config.load_dir     = path
