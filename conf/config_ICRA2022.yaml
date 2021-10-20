@@ -3,7 +3,7 @@ gpu           : 0
 # dataset       : "/hdd_mount/logs/dclaw_64x64_N151_seq20_dim_a8_Epoch10000_seed1_SCREW_NO_RANDOMIZE_20210813185936_canonical_to_canonical_kvae/models/Epochs_9999/dataset.npz"
 # dataset       : "/hdd_mount/data_npz/dclaw/64x64/SCREW_task_space_3DoF_for_ensemble/dclaw_64x64_N1801_seq25.npz"
 
-dataset       : "/hdd_mount/data_npz/dclaw/64x64/SCREW_task_space_3DoF_SubParticle_for_ensemble/dclaw_64x64_N50_seq25.npz"
+dataset       : "/hdd_mount/data_npz/dclaw/64x64/SCREW_TELLO/dclaw_64x64_N50_seq25.npz"
 # dataset       : "/hdd_mount/data_npz/dclaw/64x64/SCREW_task_space_3DoF_SubParticle/dclaw_64x64_N50_seq25.npz"
 
 # network setting

@@ -98,7 +98,7 @@ def plot_inputs_scatter(x, y, x_colomuns):
 def predict_both(x_train, y_train, x_test, y_test, y_predict, N_test):
     sequence, step, dim_y, ensemble_num = y_predict.shape
 
-    dy = 0
+    dy = 1
 
     N_test_origin = y_test.shape[0]
     index_use     = np.linspace(0, N_test_origin-1, N_test, dtype=int)
