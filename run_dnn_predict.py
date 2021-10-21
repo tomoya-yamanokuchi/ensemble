@@ -157,7 +157,7 @@ class RUN_PREDICT:
         y_predict = self.dnn_model.predict(x_train.reshape(-1, self.dim_x))
         y_predict = np.stack(y_predict, axis=-1).reshape(N_train, self.step, self.dim_y, config.N_ensemble)
 
-        plothandler.predict_both(x_train, y_train, x_train, y_train, y_predict, N_test=10)
+        plothandler.predict_both(x_train, y_train, x_train, y_train, y_predict, N_test=20)
 
 
         # self.predict_test1(mean_var=True)
@@ -342,6 +342,7 @@ if __name__ == "__main__":
     path = "M5_20210921153952"
     path = "M5_20210921154559"
     path = "M5_20211020225825"
+    path = "M5_20211021040145"
 
     # ---------------------------------------------------------
     path = "/hdd_mount/ensemble/logs/" + path
