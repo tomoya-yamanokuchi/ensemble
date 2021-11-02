@@ -157,6 +157,12 @@ class RUN_PREDICT:
         y_predict = self.dnn_model.predict(x_train.reshape(-1, self.dim_x))
         y_predict = np.stack(y_predict, axis=-1).reshape(N_train, self.step, self.dim_y, config.N_ensemble)
 
+        variance_max = np.var(y_predict, axis=-1).max()
+        print(np.var(y_predict, axis=-1).shape)
+        print(variance_max.max())
+        import sys
+        sys.exit()
+
         plothandler.predict_both(x_train, y_train, x_train, y_train, y_predict, N_test=20)
 
 
