@@ -2,14 +2,12 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
-from tensorflow.keras import backend as K 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Input
+from tensorflow.keras import backend as K
 from tensorflow.python.keras.layers import Lambda
 
 
 
-def smooth_L1(x, y): 
+def smooth_L1(x, y):
     beta     = 1.0
     diff     = x - y
     diff_abs = K.abs(diff)
@@ -19,7 +17,7 @@ def smooth_L1(x, y):
     return loss
 
 
-def smooth_L1_with_SuperLoss(x, y): 
+def smooth_L1_with_SuperLoss(x, y):
     beta     = 1.0
     diff     = x - y
     diff_abs = K.abs(diff)

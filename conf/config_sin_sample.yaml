@@ -8,8 +8,12 @@ N_ensemble    : 5
 units         : '512, 512, 512'
 
 # optimizer setting
-epoch         : 50
+optimizer     : "adam"
+epoch         : 30
 batch_size    : 64
 learning_rate : 0.001
-reload_model  : 'M5_20220216000350'
+
+loss          : "mse"
+
+reload_model  : 'M5_20220216014906'
 log_dir       : 'logs'

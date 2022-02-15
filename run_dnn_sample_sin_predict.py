@@ -11,6 +11,8 @@ from dataset.DatasetFactory import DatasetFactory
 import plotting.PlotService as pltsrv
 
 
+from tensorflow import keras
+
 
 class RUN_DNN:
     def run(self, config):
@@ -28,12 +30,28 @@ class RUN_DNN:
 
         y_predict      = model.predict(x_test)
 
+
         pltsrv.plot_ensemble_result(
             x_train   = x_train,
             y_train   = y_train,
             x_test    = x_test,
             y_predict = y_predict,
-            y_true    = y_true
+            y_true    = y_true,
+            figsize   = (12, 8),
+            ylim      = (-5.0, 5.0),
+            save_dir  = "/home/tomoya-y/Pictures"
+        )
+
+
+        pltsrv.plot_ensemble_result_mean_var(
+            x_train   = x_train,
+            y_train   = y_train,
+            x_test    = x_test,
+            y_predict = y_predict,
+            y_true    = y_true,
+            figsize   = (12, 8),
+            ylim      = (-5.0, 5.0),
+            save_dir  = "/home/tomoya-y/Pictures"
         )
 
 

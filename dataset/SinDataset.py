@@ -13,7 +13,6 @@ class SinDataset(DatasetAbstract):
         x_train  = np.hstack([x_train1, x_train2])
 
         y_train  = np.sin(x_train)
-        # y_noise  = np.random.randn(N_train) * np.std(4*0.225*np.abs(np.sin(1.5 * x_train + np.pi/8.0)))
         y_noise  = np.random.randn(N_train) * np.sqrt(0.0225 * np.abs(np.sin(1.5 * x_train + np.pi/8.0)))
         y_train  = y_train + y_noise
 
