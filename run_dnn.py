@@ -124,7 +124,8 @@ if __name__ == "__main__":
         compose,
     )
 
-    @hydra.main(config_path="conf/config_ICRA2022.yaml")
+    # @hydra.main(config_path="conf/config_ICRA2022.yaml")
+    @hydra.main(config_path="conf/config_test.yaml")
     def get_config(cfg: DictConfig) -> None:
 
         run = RUN_DNN()

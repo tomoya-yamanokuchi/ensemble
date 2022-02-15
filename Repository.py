@@ -3,6 +3,15 @@ import time
 import numpy as np
 from omegaconf import OmegaConf, DictConfig
 
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+import matplotlib.pyplot as plt
+from matplotlib import ticker, cm
+
+# plt.plot()
+# plt.show()
+
 class Repository:
     def save_config(self, config: DictConfig):
         assert type(config) == DictConfig, "expected: DictConfig, input: {}".format(type(config))
@@ -27,36 +36,55 @@ class Repository:
     #     return x_train, y_train
 
 
+    # def load_dataset(self, path):
+    #     npzfile  = np.load(path)
+    #     z = npzfile["state"]
+    #     u = npzfile["control"]
+
+    #     # # -----------------------------------
+    #     # import matplotlib
+    #     # matplotlib.rcParams['pdf.fonttype'] = 42
+    #     # matplotlib.rcParams['ps.fonttype'] = 42
+    #     # import matplotlib.pyplot as plt
+    #     # from matplotlib import ticker, cm
+    #     # assert len(z.shape) == 3
+    #     # sequence, step, dim = z.shape
+    #     # fig, ax = plt.subplots(dim, 1)
+    #     # for d in range(dim):
+    #     #     ax[d].plot(z[1701:1701+200, :, d].transpose())
+    #     # plt.show()
+    #     # # -----------------------------------
+
+    #     y_train  = z[:, 1:]
+    #     x_train1 = z[:, :-1]
+    #     x_train2 = u[:, :-1]
+
+    #     # y_train  = z[:1, 1:]
+    #     # x_train1 = z[:1, :-1]
+    #     # x_train2 = u[:1, :-1]
+
+    #     x_train  = np.concatenate([x_train1, x_train2], axis=-1)
+    #     return x_train, y_train
+    #     # return x_train[:1], y_train[:1]
+
+
+
     def load_dataset(self, path):
-        npzfile  = np.load(path)
-        z = npzfile["state"]
-        u = npzfile["control"]
+        N_valid = 500
+        x_valid1 = np.linspace(-np.pi*2.0, -np.pi, int(N_valid*0.5))
+        x_valid2 = np.linspace( np.pi,  np.pi*2.0, int(N_valid*0.5))
+        x_valid  = np.hstack([x_valid1, x_valid2])
 
-        # # -----------------------------------
-        # import matplotlib
-        # matplotlib.rcParams['pdf.fonttype'] = 42
-        # matplotlib.rcParams['ps.fonttype'] = 42
-        # import matplotlib.pyplot as plt
-        # from matplotlib import ticker, cm
-        # assert len(z.shape) == 3
-        # sequence, step, dim = z.shape
-        # fig, ax = plt.subplots(dim, 1)
-        # for d in range(dim):
-        #     ax[d].plot(z[1701:1701+200, :, d].transpose())
-        # plt.show()
-        # # -----------------------------------
+        y_mean  = np.sin(x_valid)
+        y_valid = y_mean + np.random.randn(N_valid) * np.std(4*0.225*np.abs(np.sin(1.5 * x_valid + np.pi/8.0)))
 
-        y_train  = z[:, 1:]
-        x_train1 = z[:, :-1]
-        x_train2 = u[:, :-1]
+        plt.plot(x_valid, y_valid, "x", color="m")
+        plt.show()
 
-        # y_train  = z[:1, 1:]
-        # x_train1 = z[:1, :-1]
-        # x_train2 = u[:1, :-1]
 
-        x_train  = np.concatenate([x_train1, x_train2], axis=-1)
-        return x_train, y_train
+        return x_valid, y_valid
         # return x_train[:1], y_train[:1]
+
 
 
 
