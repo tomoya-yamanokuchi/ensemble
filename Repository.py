@@ -9,8 +9,7 @@ matplotlib.rcParams['ps.fonttype'] = 42
 import matplotlib.pyplot as plt
 from matplotlib import ticker, cm
 
-# plt.plot()
-# plt.show()
+
 
 class Repository:
     def save_config(self, config: DictConfig):
@@ -107,3 +106,21 @@ class Repository:
         y_log_mean = npzfile["y_log_mean"]
         y_log_std  = npzfile["y_log_std"]
         return y_log_mean, y_log_std
+
+
+    def reload_config(self, config):
+        if (config.reload_model != '') or (config.reload_model != "") or (config.reload_model is not None):
+            pwd           = os.getcwd().split("outputs")[0] # This depends on hydra
+            config_reload = OmegaConf.load(pwd + "logs/" + config.reload_model + "/config.yaml")
+            '''
+                reloadしたときに変更してもいい変数
+            '''
+            updatable_keys = [
+                'gpu',
+                'reload_model',
+            ]
+            for key, value in list(config.items()):
+                if key in updatable_keys:
+                    config_reload.__setattr__(key, value)
+
+        return config_reload
