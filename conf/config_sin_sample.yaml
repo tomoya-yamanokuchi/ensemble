@@ -5,7 +5,7 @@ dataset       : "sin"
 dim_input     : 1
 dim_output    : 1
 N_ensemble    : 5
-units         : '512, 512, 512'
+units         : '256, 256, 256, 256'
 
 # optimizer setting
 optimizer     : "adam"
@@ -15,5 +15,5 @@ learning_rate : 0.001
 
 loss          : "mse"
 
-reload_model  : 'M5_20220216014906'
+reload_model  : 'M5_20220216142109'
 log_dir       : 'logs'

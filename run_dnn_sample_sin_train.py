@@ -23,14 +23,14 @@ class RUN_DNN:
         dataset          = factory.create(dataset_name=config.dataset)
         x_train, y_train = dataset.load_train()
 
-        # pltsrv.plot_marker(x_train, y_train)
+        pltsrv.plot_marker(x_train, y_train)
 
         dnn   = DNNSample(config)
         model = dnn.nn_ensemble(N_ensemble=config.N_ensemble)
-        model.summary()
 
         optimizer = OptimizerFactory().create(optimizer=config.optimizer, config=config)
         model.compile(loss=LossFactory().create(loss=config.loss), optimizer=optimizer, metrics=['mse'])
+        model.summary()
 
         checkpoint_path = config.log_dir + "/cp-{epoch:04d}.ckpt"
         checkpoint_dir  = os.path.dirname(checkpoint_path)
@@ -50,16 +50,16 @@ class RUN_DNN:
         x_test, y_true = dataset.load_test()
         y_predict      = model.predict(x_test)
 
-        # pltsrv.plot_ensemble_result(
-        #     x_train   = x_train,
-        #     y_train   = y_train,
-        #     x_test    = x_test,
-        #     y_predict = y_predict,
-        #     y_true    = y_true,
-        #     figsize   = (12, 8),
-        #     ylim      = (-5.0, 5.0),
-        #     save_dir  = "/home/tomoya-y/Pictures"
-        # )
+        pltsrv.plot_ensemble_result(
+            x_train   = x_train,
+            y_train   = y_train,
+            x_test    = x_test,
+            y_predict = y_predict,
+            y_true    = y_true,
+            figsize   = (12, 8),
+            ylim      = (-5.0, 5.0),
+            save_dir  = "/home/tomoya-y/Pictures"
+        )
 
 
 if __name__ == "__main__":
