@@ -1,4 +1,6 @@
 from .SinDataset import SinDataset
+from .SincDataset import SincDataset
+from .cos2DDataset import cos2DDataset
 
 
 class DatasetFactory:
@@ -7,6 +9,8 @@ class DatasetFactory:
 
         dataset_dict = {
             "sin" : SinDataset(),
+            "sinc" : SincDataset(),
+            "cos2D" : cos2DDataset(),
         }
 
         return dataset_dict[dataset_name]
