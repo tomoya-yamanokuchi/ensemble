@@ -1,16 +1,18 @@
 from .SinDataset import SinDataset
 from .SincDataset import SincDataset
 from .cos2DDataset import cos2DDataset
-
+from .KVAE_Latent2Observed import KVAE_Latent2Observed
 
 class DatasetFactory:
     def create(self, dataset_name: str):
         assert type(dataset_name) == str
 
         dataset_dict = {
-            "sin" : SinDataset(),
+            "sin"  : SinDataset(),
             "sinc" : SincDataset(),
-            "cos2D" : cos2DDataset(),
+            "cos2D": cos2DDataset(),
+
+            "kvae": KVAE_Latent2Observed(),
         }
 
         return dataset_dict[dataset_name]

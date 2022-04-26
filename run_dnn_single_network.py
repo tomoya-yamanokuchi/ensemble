@@ -14,7 +14,7 @@ from sklearn.model_selection import train_test_split
 import hydra
 from omegaconf import DictConfig
 from mpl_toolkits.mplot3d import Axes3D
-import loss.myloss
+from loss import myloss
 import PlotHandler as plothandler
 
 from dnn_kvae import DNNModel
@@ -46,10 +46,6 @@ class RUN_DNN:
         y_train_origin       = copy.deepcopy(y_train)
 
 
-        # self.plot_all_sequence(x_train[:, :, -8:])
-        # self.plot_all_sequence(y_train[:, :, :])
-
-
         cout.console_output(N_train, step, dim_x, dim_y)
 
         # -------------- normalize and convert -------------------
@@ -61,18 +57,12 @@ class RUN_DNN:
         y_train, y_log_mean, y_log_std = norm.normalize_z_score(y_train)
         repository.save_norm_data_z_score(config.log_dir + "/norm_data.npz",  y_log_mean, y_log_std)
 
-        plothandler.plot_all_sequence(x_train[:, :, :])
-        plothandler.plot_all_sequence(y_train[:, :, :])
-
-        # y_restore = np.exp(norm.denormalize(y_train, y_min, y_max))
-        # # self.plot_all_sequence(y_restore)
-        # error = np.linalg.norm(y_restore - y_train_origin)
-
+        # plothandler.plot_all_sequence(x_train[:, :, :])
+        # plothandler.plot_all_sequence(y_train[:, :, :])
 
         # -------------- split data -------------------
-        # x_train, x_valid = train_test_split(x_train, test_size=0.1)
-        # y_train, y_valid = train_test_split(y_train, test_size=0.1)
-
+        _, x_valid = train_test_split(x_train, test_size=0.3)
+        _, y_valid = train_test_split(y_train, test_size=0.3)
 
         # -------------- split data -------------------
         checkpoint_path = config.log_dir + "/cp-{epoch:04d}.ckpt"
@@ -91,7 +81,7 @@ class RUN_DNN:
             with tf.variable_scope("ensemble"):
 
                 dnn       = DNNModel(config)
-                model     = dnn.nn_ensemble(N_ensemble=config.N_ensemble)
+                model     = dnn.nn_construct()
                 optimizer = tf.train.AdamOptimizer(learning_rate=config.learning_rate)
                 model.compile(loss=myloss.smooth_L1, optimizer=optimizer, metrics=['mse'])
                 # model.compile(loss='msle', optimizer=optimizer, metrics=['msle'])
@@ -101,12 +91,10 @@ class RUN_DNN:
                 saver = tf.train.Saver()
                 model.fit(
                     x                   = x_train.reshape(-1, dim_x),
-                    # y                   = [y_train[:,:,0].reshape(-1)]*config.N_ensemble,
-                    y                   = [y_train.reshape(-1, dim_y)]*config.N_ensemble,
+                    y                   = y_train.reshape(-1, dim_y),
                     epochs              = config.epoch,
                     batch_size          = config.batch_size,
-                    # validation_data     = (x_train.reshape(-1, dim_x), [y_train[:,:,0].reshape(-1)]*config.N_ensemble),
-                    validation_data     = (x_train.reshape(-1, dim_x), [y_train.reshape(-1, dim_y)]*config.N_ensemble),
+                    validation_data     = (x_valid.reshape(-1, dim_x), y_valid.reshape(-1, dim_y)),
                     callbacks           = [mycb],
                     use_multiprocessing = True
                 )
