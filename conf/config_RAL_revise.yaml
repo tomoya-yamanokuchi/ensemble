@@ -1,5 +1,7 @@
 gpu           : 0
 dataset       : "kvae"
+kvae_path     : "dclaw_64x64_N2001_seq25_dim_a8_Epoch2000_seed0_SCREW_TELLO_20220422181628_random_nonfix_to_canonical_kvae"
+scope_name    : "state_estimator"
 
 # network setting
 dim_inputs    : 8

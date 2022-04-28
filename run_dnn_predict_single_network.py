@@ -1,3 +1,4 @@
+from distutils.command.config import config
 from numpy import random
 from Repository import Repository
 import json
@@ -20,6 +21,7 @@ from tensorflow.compat.v1 import ConfigProto
 # from config_kvae import reload_config, get_image_config
 from config_seesaw import reload_config, get_image_config
 from dnn_kvae import DNNModel
+from dnn_state_estimator import DNNStateEstimator
 import normalize_dnn_data as norm_dnn_data
 import Normalization as norm
 import ConsoleOutput as cout
@@ -29,6 +31,14 @@ import PlotHandler as plothandler
 from dataset.DatasetFactory import DatasetFactory
 
 class RUN_PREDICT:
+    def __init__(self, config):
+        self.config     = config
+        factory         = DatasetFactory()
+        self.dataset    = factory.create(dataset_name=config.dataset)
+        self.repository = Repository()
+        self.repository.save_config(self.config)
+
+
     def plot_hist(self, x):
         fig, ax = plt.subplots()
         plt.hist(x)
@@ -100,16 +110,11 @@ class RUN_PREDICT:
 
 
 
-    def run(self, config):
-        self.config = config
+    def run(self):
+        config = self.config
         os.environ['CUDA_VISIBLE_DEVICES'] = str(config.gpu)
 
-        repository = Repository()
-
-        factory              = DatasetFactory()
-        dataset              = factory.create(dataset_name=config.dataset)
-        x_train, y_train     = dataset.load_train()
-
+        x_train, y_train     = self.dataset.load_train()
         N_train, step, dim_x = x_train.shape
         dim_y                = y_train.shape[-1]
         y_train_origin       = copy.deepcopy(y_train)
@@ -122,12 +127,10 @@ class RUN_PREDICT:
         # y_min, y_max  = repository.load_norm_data(self.config.load_dir + "/norm_data.npz")
         # y_train       = np.log(y_train)
 
-        y_log_mean, y_log_std = repository.load_norm_data_z_score(self.config.load_dir + "/norm_data.npz")
+        y_log_mean, y_log_std = self.repository.load_norm_data_z_score(self.config.log_dir + "/norm_data.npz")
         y_train, _, _ = norm.normalize_z_score(y_train, y_log_mean, y_log_std)
 
         # plothandler.plot_all_sequence(y_train[:, :, :])
-
-        dnn = DNNModel(config)
 
         # session_config = tf.compat.v1.ConfigProto()
         # session_config.gpu_options.allow_growth = True
@@ -135,14 +138,13 @@ class RUN_PREDICT:
         # saver = tf.train.Saver()
         sess = tf.keras.backend.get_session()
         # build model
-        with tf.variable_scope("ensemble"):
-            dnn = DNNModel(config)
+        with tf.variable_scope(config.scope_name):
+            dnn = DNNStateEstimator(config)
             # self.dnn_model_instance = tf.keras.models.load_model( path_conf + "/model.h5", custom_objects={'swish': dnn.swish })
             self.dnn_model = dnn.nn_construct()
 
-        saver_dnn = tf.train.Saver(var_list=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='ensemble'))
+        saver_dnn = tf.train.Saver(var_list=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=config.scope_name))
         saver_dnn.restore(sess, config.reload_model)
-
 
         self.N_train = N_train
         self.step    = step
@@ -316,13 +318,22 @@ class RUN_PREDICT:
 
 
 if __name__ == "__main__":
-    path = "M5_20220426223533"
+    import os
+    import hydra
+    from attrdict import AttrDict
+    from omegaconf import DictConfig, OmegaConf
+    from hydra.core.config_store import ConfigStore
+    from RunDNNSingleNetwork import RunDNNSingleNetwork
 
-    # ---------------------------------------------------------
-    path = "/hdd_mount/ensemble/logs/" + path
-    config              = OmegaConf.load(path + "/config.yaml")
-    config.load_dir     = path
-    config.reload_model = path + "/model.ckpt"
+    @hydra.main(config_path="conf/config_RAL_revise.yaml")
+    def get_config(cfg: DictConfig) -> None:
 
-    run = RUN_PREDICT()
-    run.run(config)
+        path = "/hdd_mount/logs/" + cfg.kvae_path + "/state_estimator"
+        config = OmegaConf.load(path + "/config.yaml")
+        config.log_dir = path
+        config.reload_model = path + "/model.ckpt"
+        run = RUN_PREDICT(config)
+        run.dataset.kvae_path = config.kvae_path
+        run.run()
+
+    get_config()
