@@ -6,7 +6,7 @@ import numpy as np
 
 
 class SinDataset(DatasetAbstract):
-    def load_train(self, N=2000):
+    def load_train(self, config, N=2000):
         N_train  = N
         x_train1 = np.linspace(-np.pi*2.0, -np.pi, int(N_train*0.5))
         x_train2 = np.linspace( np.pi,  np.pi*2.0, int(N_train*0.5))

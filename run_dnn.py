@@ -14,7 +14,7 @@ from sklearn.model_selection import train_test_split
 import hydra
 from omegaconf import DictConfig
 from mpl_toolkits.mplot3d import Axes3D
-import loss.myloss
+from loss import myloss
 import PlotHandler as plothandler
 
 from dnn_kvae import DNNModel
@@ -28,6 +28,13 @@ import Normalization as norm
 from dataset.DatasetFactory import DatasetFactory
 
 
+import sys
+import pathlib
+p = pathlib.Path(__file__).resolve()
+sys.path.append(str(p.parent))
+
+
+
 class RUN_DNN:
     def run(self, config):
         self.config = config
@@ -38,7 +45,7 @@ class RUN_DNN:
 
 
         factory              = DatasetFactory()
-        dataset              = factory.create(dataset_name=config.dataset)
+        dataset              = factory.create(dataset_name=config.dataset, config=config)
         x_train, y_train     = dataset.load_train()
 
         N_train, step, dim_x = x_train.shape
@@ -59,10 +66,10 @@ class RUN_DNN:
         # repository.save_norm_data(config.log_dir + "/norm_data.npz",  x_min, x_max, y_min, y_max)
 
         y_train, y_log_mean, y_log_std = norm.normalize_z_score(y_train)
-        repository.save_norm_data_z_score(config.log_dir + "/norm_data.npz",  y_log_mean, y_log_std)
+        repository.save_norm_data_z_score(repository.log_dir + "/norm_data.npz",  y_log_mean, y_log_std)
 
-        plothandler.plot_all_sequence(x_train[:, :, :])
-        plothandler.plot_all_sequence(y_train[:, :, :])
+        # plothandler.plot_all_sequence(x_train[:, :, :])
+        # plothandler.plot_all_sequence(y_train[:, :, :])
 
         # y_restore = np.exp(norm.denormalize(y_train, y_min, y_max))
         # # self.plot_all_sequence(y_restore)
@@ -75,14 +82,14 @@ class RUN_DNN:
 
 
         # -------------- split data -------------------
-        checkpoint_path = config.log_dir + "/cp-{epoch:04d}.ckpt"
+        checkpoint_path = repository.log_dir + "/cp-{epoch:04d}.ckpt"
         checkpoint_dir  = os.path.dirname(checkpoint_path)
         cp_callback     = tf.keras.callbacks.ModelCheckpoint(checkpoint_path,
                                                         save_weights_only=True,
                                                         verbose=0,
                                                         period=config.epoch)
 
-        mycb = MYCallBack(config.log_dir)
+        mycb = MYCallBack(repository.log_dir)
 
 
         session_config = tf.compat.v1.ConfigProto()
@@ -112,6 +119,7 @@ class RUN_DNN:
                 )
 
                 # model.save(checkpoint_dir + "/model.h5")
+                print("     path  ---->  {}".format(checkpoint_dir + '/model.ckpt'))
                 saver.save(sess, checkpoint_dir + '/model.ckpt')
 
         print("end")
@@ -132,7 +140,7 @@ if __name__ == "__main__":
 
     # @hydra.main(config_path="conf/config_ICRA2022.yaml")
     # @hydra.main(config_path="conf/config_test.yaml")
-    @hydra.main(config_path="conf/config_RAL_revise.yaml")
+    @hydra.main(config_path="conf/config_block_mating.yaml")
     def get_config(cfg: DictConfig) -> None:
 
         run = RUN_DNN()

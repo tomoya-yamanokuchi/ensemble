@@ -2,9 +2,10 @@ from .SinDataset import SinDataset
 from .SincDataset import SincDataset
 from .cos2DDataset import cos2DDataset
 from .KVAE_Latent2Observed import KVAE_Latent2Observed
+from .KVAE_z_true import KVAE_z_true
 
 class DatasetFactory:
-    def create(self, dataset_name: str):
+    def create(self, dataset_name: str, config):
         assert type(dataset_name) == str
 
         dataset_dict = {
@@ -12,7 +13,8 @@ class DatasetFactory:
             "sinc" : SincDataset(),
             "cos2D": cos2DDataset(),
 
-            "kvae": KVAE_Latent2Observed(),
+            "kvae"       : KVAE_Latent2Observed(),
+            "kvae_z_true": KVAE_z_true(config),
         }
 
         return dataset_dict[dataset_name]
@@ -20,4 +22,5 @@ class DatasetFactory:
 
 if __name__ == '__main__':
     factory = DatasetFactory()
-    factory.create(dataset_name="sin")
+    # factory.create(dataset_name="sin")
+    factory.create(dataset_name="kvae_z_true")

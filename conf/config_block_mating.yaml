@@ -1,0 +1,16 @@
+gpu           : 0
+dataset       : "kvae_z_true"
+dataset_path  : "/data_npz/block_mating/64x64/BLOCK_MATING_MAIN"
+scope_name    : "state_estimator"
+
+# network setting
+dim_inputs    : 12
+dim_outputs   : 10
+N_ensemble    : 5
+units         : '512, 512, 512'
+
+# optimizer setting
+epoch         : 100
+batch_size    : 128
+learning_rate : 0.001
+reload_model  : ''

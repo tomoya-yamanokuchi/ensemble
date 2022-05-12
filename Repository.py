@@ -10,13 +10,19 @@ matplotlib.rcParams['ps.fonttype'] = 42
 import matplotlib.pyplot as plt
 from matplotlib import ticker, cm
 
+import sys
+import pathlib
+p = pathlib.Path(__file__).resolve()
+sys.path.append(str(p.parent))
+
 
 
 class Repository:
     def save_config(self, config: DictConfig):
         assert type(config) == DictConfig, "expected: DictConfig, input: {}".format(type(config))
-        os.makedirs(config.log_dir, exist_ok=True)
-        OmegaConf.save(config, config.log_dir + "/config.yaml")
+        self.log_dir = str(p.parent) + "/logs/M{}_{}".format(config.N_ensemble, time.strftime('%Y%m%d%H%M%S', time.localtime()))
+        os.makedirs(self.log_dir, exist_ok=True)
+        OmegaConf.save(config, self.log_dir + "/config.yaml")
 
 
     def load_dataset(self, path):

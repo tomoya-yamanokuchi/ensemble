@@ -24,8 +24,19 @@ import normalize_dnn_data as norm_dnn_data
 import Normalization as norm
 import ConsoleOutput as cout
 import PlotHandler as plothandler
+from dataset.DatasetFactory import DatasetFactory
+
+
 
 class RUN_PREDICT:
+    def __init__(self, config):
+        self.config     = config
+        factory         = DatasetFactory()
+        self.dataset    = factory.create(config.dataset, config)
+        self.repository = Repository()
+        # self.repository.save_config(self.config)
+
+
     def plot_hist(self, x):
         fig, ax = plt.subplots()
         plt.hist(x)
@@ -101,8 +112,9 @@ class RUN_PREDICT:
         self.config = config
         os.environ['CUDA_VISIBLE_DEVICES'] = str(config.gpu)
 
-        repository = Repository()
-        x_train, y_train     = repository.load_dataset(config.dataset)
+        x_train, y_train     = self.dataset.load_train()
+        N_train, step, dim_x = x_train.shape
+        dim_y                = y_train.shape[-1]
 
         # --------------------
         # x_aux = self.add_noise(x_train, dim_list=[6, 7, 8, 9, 10,11,12,13], std=1, num=20)
@@ -124,7 +136,7 @@ class RUN_PREDICT:
         # y_min, y_max  = repository.load_norm_data(self.config.load_dir + "/norm_data.npz")
         # y_train       = np.log(y_train)
 
-        y_log_mean, y_log_std = repository.load_norm_data_z_score(self.config.load_dir + "/norm_data.npz")
+        y_log_mean, y_log_std = self.repository.load_norm_data_z_score(self.config.load_dir + "/norm_data.npz")
         y_train, _, _ = norm.normalize_z_score(y_train, y_log_mean, y_log_std)
 
         # plothandler.plot_all_sequence(y_train[:, :, :])
@@ -160,8 +172,8 @@ class RUN_PREDICT:
         variance_max = np.var(y_predict, axis=-1).max()
         print(np.var(y_predict, axis=-1).shape)
         print(variance_max.max())
-        import sys
-        sys.exit()
+        # import sys
+        # sys.exit()
 
         plothandler.predict_both(x_train, y_train, x_train, y_train, y_predict, N_test=20)
 
@@ -350,11 +362,14 @@ if __name__ == "__main__":
     path = "M5_20211020225825"
     path = "M5_20211021040145"
 
+    path = "M5_20220512175724"
+    path = "M5_20220512181404"
+
     # ---------------------------------------------------------
     path = "/hdd_mount/ensemble/logs/" + path
     config              = OmegaConf.load(path + "/config.yaml")
     config.load_dir     = path
     config.reload_model = path + "/model.ckpt"
 
-    run = RUN_PREDICT()
+    run = RUN_PREDICT(config)
     run.run(config)

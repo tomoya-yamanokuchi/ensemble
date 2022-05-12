@@ -3,7 +3,7 @@ import numpy as np
 
 
 class SincDataset(DatasetAbstract):
-    def load_train(self, N=2000):
+    def load_train(self, config, N=2000):
         x1      = np.linspace(-np.pi*2.0, -np.pi*0.1, int(N*0.5))
         x2      = np.linspace( np.pi*0.1,  np.pi*2.0, int(N*0.5))
         x       = np.hstack([x1, x2])
