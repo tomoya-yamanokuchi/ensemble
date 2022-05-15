@@ -4,8 +4,8 @@ dataset_path  : "/data_npz/block_mating/64x64/BLOCK_MATING_MAIN"
 scope_name    : "state_estimator"
 
 # network setting
-dim_inputs    : 12
-dim_outputs   : 10
+dim_inputs    : 9
+dim_outputs   : 7
 N_ensemble    : 5
 units         : '512, 512, 512'
 
