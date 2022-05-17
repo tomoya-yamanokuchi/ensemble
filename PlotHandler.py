@@ -134,6 +134,9 @@ def predict_both(x_train, y_train, x_test, y_test, y_predict, N_test):
                 ax[0, n].set_ylabel(r"$ e_{t_+1} $", fontsize=18)
                 ax[1, n].set_ylabel(r"$ e_{t_+1} $", fontsize=18)
 
+            # ax[0, n].set_ylim(-2, 2)
+            # ax[1, n].set_ylim(-2, 2)
+
         lines = []
         labels = []
         for _ax in fig.axes:

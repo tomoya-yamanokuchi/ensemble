@@ -10,7 +10,7 @@ N_ensemble    : 5
 units         : '512, 512, 512'
 
 # optimizer setting
-epoch         : 100
-batch_size    : 128
+epoch         : 1000
+batch_size    : 64
 learning_rate : 0.001
 reload_model  : ''

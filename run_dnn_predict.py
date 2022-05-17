@@ -365,6 +365,7 @@ if __name__ == "__main__":
     path = "M5_20220512175724"
     path = "M5_20220512181404"
     path = "M5_block_mating"
+    path = "M5_block_mating_epoch1000_batch_size64"
 
     # ---------------------------------------------------------
     path = "/hdd_mount/ensemble/logs/" + path
