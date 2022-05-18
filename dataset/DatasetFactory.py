@@ -13,8 +13,8 @@ class DatasetFactory:
             "sinc" : SincDataset(),
             "cos2D": cos2DDataset(),
 
-            "kvae"       : KVAE_Latent2Observed(),
-            "kvae_z_true": KVAE_z_true(config),
+            "kvae"       : KVAE_Latent2Observed(), # 状態推定器学習用
+            "kvae_z_true": KVAE_z_true(config),    # アンサンブル学習用
         }
 
         return dataset_dict[dataset_name]

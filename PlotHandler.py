@@ -151,37 +151,36 @@ def predict_both(x_train, y_train, x_test, y_test, y_predict, N_test):
 
 
 
-def predict_single_network(x_train, y_train, x_test, y_test, y_predict, N_test):
+def predict_single_network(x_train, y_train, x_test, y_test, y_predict, N_test, figsize=(9, 6)):
     sequence, step, dim_y = y_predict.shape
-
-    dy = 1
 
     N_test_origin = y_test.shape[0]
     index_use     = np.linspace(0, N_test_origin-1, N_test, dtype=int)
     y_test        = np.take(y_test, list(index_use), axis=0)
     y_predict     = np.take(y_predict, list(index_use), axis=0)
 
-    fig, ax = plt.subplots(2, N_test, figsize=(9, 6))
-    for n in range(N_test):
-        ax[0, n].plot(y_predict[n, :, dy],  color="mediumvioletred", label="DNN predict")
-        ax[0, n].plot(y_test[n, :, dy],     color="k",               label="Ground Truth")
+    for dy in range(dim_y):
+        fig, ax = plt.subplots(2, N_test, figsize=figsize)
+        for n in range(N_test):
+            ax[0, n].plot(y_predict[n, :, dy],  color="mediumvioletred", label="DNN predict")
+            ax[0, n].plot(y_test[n, :, dy],     color="k",               label="Ground Truth")
 
-        x = range(step)
-        ax[1, n].plot(x, y_predict[n, :, dy],  "-",  color="mediumvioletred", label="DNN predict")
-        ax[1, n].plot(   y_test[n, :, dy],           color="k", label="Ground Truth")
+            x = range(step)
+            ax[1, n].plot(x, y_predict[n, :, dy],  "-",  color="mediumvioletred", label="DNN predict")
+            ax[1, n].plot(   y_test[n, :, dy],           color="k", label="Ground Truth")
 
-        ax[1, n].set_xlabel("Step", fontsize=18)
-        if n == 0:
-            ax[0, n].set_ylabel(r"$ e_{t_+1} $", fontsize=18)
-            ax[1, n].set_ylabel(r"$ e_{t_+1} $", fontsize=18)
+            ax[1, n].set_xlabel("Step", fontsize=18)
+            if n == 0:
+                ax[0, n].set_ylabel(r"$ e_{t_+1} $", fontsize=18)
+                ax[1, n].set_ylabel(r"$ e_{t_+1} $", fontsize=18)
 
-    lines = []
-    labels = []
-    for _ax in fig.axes:
-        axLine, axLabel = _ax.get_legend_handles_labels()
-        lines.extend(axLine)
-        labels.extend(axLabel)
-    # fig.legend(lines, labels[:5], bbox_to_anchor=(0.75, 0.95,), ncol=5, fontsize=16)
-    fig.legend(lines[5:7], labels[5:7], loc="upper center", ncol=2, fontsize=14)
+        lines = []
+        labels = []
+        for _ax in fig.axes:
+            axLine, axLabel = _ax.get_legend_handles_labels()
+            lines.extend(axLine)
+            labels.extend(axLabel)
+        # fig.legend(lines, labels[:5], bbox_to_anchor=(0.75, 0.95,), ncol=5, fontsize=16)
+        fig.legend(lines[5:7], labels[5:7], loc="upper center", ncol=2, fontsize=14)
 
-    plt.show()
+        plt.show()

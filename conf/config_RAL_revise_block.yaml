@@ -1,0 +1,18 @@
+gpu           : 0
+dataset       : "kvae"
+
+kvae_path     : "block_mating_64x64_N2005_seq25_z_latent_dim_a8_Epoch1000_seed1_BLOCK_MATING_MAIN_20220515063413_random_nonfix_to_canonical_kvae"
+scope_name    : "state_estimator"
+
+# network setting
+dim_inputs    : 7
+dim_outputs   : 7
+N_ensemble    : 5
+units         : '512, 512, 512'
+
+# optimizer setting
+epoch         : 100
+batch_size    : 128
+learning_rate : 0.001
+reload_model  : ''
+log_dir       : 'logs'

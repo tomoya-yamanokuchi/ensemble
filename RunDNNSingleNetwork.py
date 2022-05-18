@@ -33,7 +33,7 @@ class RunDNNSingleNetwork:
     def __init__(self, config):
         self.config     = config
         factory         = DatasetFactory()
-        self.dataset    = factory.create(dataset_name=config.dataset)
+        self.dataset    = factory.create(dataset_name=config.dataset, config=config)
         self.repository = Repository()
         self.repository.save_config(self.config)
 

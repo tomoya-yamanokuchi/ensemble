@@ -34,7 +34,7 @@ class RUN_PREDICT:
     def __init__(self, config):
         self.config     = config
         factory         = DatasetFactory()
-        self.dataset    = factory.create(dataset_name=config.dataset)
+        self.dataset    = factory.create(dataset_name=config.dataset, config=config)
         self.repository = Repository()
         self.repository.save_config(self.config)
 
@@ -156,7 +156,7 @@ class RUN_PREDICT:
         y_predict = self.dnn_model.predict(x_train.reshape(-1, self.dim_x))
         y_predict = y_predict.reshape(N_train, self.step, self.dim_y)
 
-        plothandler.predict_single_network(x_train, y_train, x_train, y_train, y_predict, N_test=20)
+        plothandler.predict_single_network(x_train, y_train, x_train, y_train, y_predict, N_test=20, figsize=(35, 3))
         # plothandler.predict_both(x_train, y_train, x_train, y_train, y_predict, N_test=20)
 
 
@@ -325,8 +325,15 @@ if __name__ == "__main__":
     from hydra.core.config_store import ConfigStore
     from RunDNNSingleNetwork import RunDNNSingleNetwork
 
-    @hydra.main(config_path="conf/config_RAL_revise.yaml")
+    # @hydra.main(config_path="conf/config_RAL_revise.yaml")
+    @hydra.main(config_path="conf/config_RAL_revise_block.yaml")
     def get_config(cfg: DictConfig) -> None:
+
+        cfg.kvae_path = "block_mating_64x64_N2005_seq25_z_latent_dim_a8_Epoch1000_seed1_BLOCK_MATING_MAIN_20220515063413_random_nonfix_to_canonical_kvae"
+        cfg.kvae_path = "block_mating_64x64_N2005_seq25_z_latent_dim_a8_Epoch1000_seed2_BLOCK_MATING_MAIN_20220515063419_random_nonfix_to_canonical_kvae"
+        cfg.kvae_path = "block_mating_64x64_N2005_seq25_z_latent_dim_a8_Epoch1000_seed3_BLOCK_MATING_MAIN_20220515182332_random_nonfix_to_canonical_kvae"
+        cfg.kvae_path = "block_mating_64x64_N2005_seq25_z_latent_dim_a8_Epoch1000_seed4_BLOCK_MATING_MAIN_20220515182339_random_nonfix_to_canonical_kvae"
+        cfg.kvae_path = "block_mating_64x64_N2005_seq25_z_latent_dim_a8_Epoch1000_seed5_BLOCK_MATING_MAIN_20220516075606_random_nonfix_to_canonical_kvae"
 
         path = "/hdd_mount/logs/" + cfg.kvae_path + "/state_estimator"
         config = OmegaConf.load(path + "/config.yaml")

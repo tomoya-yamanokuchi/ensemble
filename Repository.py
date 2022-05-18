@@ -20,7 +20,9 @@ sys.path.append(str(p.parent))
 class Repository:
     def save_config(self, config: DictConfig):
         assert type(config) == DictConfig, "expected: DictConfig, input: {}".format(type(config))
-        self.log_dir = str(p.parent) + "/logs/M{}_{}".format(config.N_ensemble, time.strftime('%Y%m%d%H%M%S', time.localtime()))
+
+        if config.dataset == "kvae":    self.log_dir = config.log_dir
+        else:                           self.log_dir = str(p.parent) + "/logs/M{}_{}".format(config.N_ensemble, time.strftime('%Y%m%d%H%M%S', time.localtime()))
         os.makedirs(self.log_dir, exist_ok=True)
         OmegaConf.save(config, self.log_dir + "/config.yaml")
 
